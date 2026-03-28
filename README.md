@@ -21,6 +21,7 @@
 | ドキュメント | 説明 |
 | :-: | :-: |
 | [CONTRIBUTING.md](./CONTRIBUTING.md) | 開発フロー・コミット規約・コーディング規約 |
+| [docs/requirements-definition.md](./docs/requirements-definition.md) | 要件定義書 |
 | [docs/coding-rules.md](./docs/coding-rules.md) | コーディング規約の詳細 |
 | [docs/uml/](./docs/uml/) | UML図 |
 
