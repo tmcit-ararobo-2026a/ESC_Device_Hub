@@ -9827,6 +9827,10 @@
 		(uuid "09e9c357-b83c-4140-9d42-fdbb30b0626f")
 	)
 	(no_connect
+		(at 139.7 124.46)
+		(uuid "1708f212-1207-45ce-9cc3-7f9376a44761")
+	)
+	(no_connect
 		(at 139.7 91.44)
 		(uuid "6e8824c2-7437-4540-8db0-43cd4cd49676")
 	)
@@ -9841,6 +9845,14 @@
 	(no_connect
 		(at 139.7 104.14)
 		(uuid "d42af7fa-6b1b-4ebf-b4da-bd6ccc420aed")
+	)
+	(no_connect
+		(at 88.9 96.52)
+		(uuid "d795dafe-a7a8-4c14-b29f-927105623bcb")
+	)
+	(no_connect
+		(at 88.9 93.98)
+		(uuid "e564d7cd-5c57-456b-a26f-4b3890156340")
 	)
 	(no_connect
 		(at 297.18 82.55)
