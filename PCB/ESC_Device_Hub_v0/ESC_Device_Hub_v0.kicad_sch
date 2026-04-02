@@ -1338,6 +1338,234 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "Device:Crystal_GND2"
+			(pin_names
+				(offset 1.016)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "Y"
+				(at 0 5.715 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "Crystal_GND2"
+				(at 0 3.81 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "Three pin crystal, GND on pin 2"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "quartz ceramic resonator oscillator"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_fp_filters" "Crystal*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "Crystal_GND2_0_1"
+				(polyline
+					(pts
+						(xy -2.54 0) (xy -1.905 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -2.54 -2.286) (xy -2.54 -3.556) (xy 2.54 -3.556) (xy 2.54 -2.286)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.905 -1.27) (xy -1.905 1.27)
+					)
+					(stroke
+						(width 0.508)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -1.143 2.54)
+					(end 1.143 -2.54)
+					(stroke
+						(width 0.3048)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 -3.81) (xy 0 -3.556)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.905 1.27) (xy 1.905 -1.27)
+					)
+					(stroke
+						(width 0.508)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.905 0) (xy 2.54 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "Crystal_GND2_1_1"
+				(pin passive line
+					(at -3.81 0 0)
+					(length 1.27)
+					(name "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 0 -5.08 90)
+					(length 1.27)
+					(name "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 3.81 0 180)
+					(length 1.27)
+					(name "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "Device:D_Filled"
 			(pin_numbers
 				(hide yes)
@@ -4720,160 +4948,6 @@
 						)
 					)
 					(number "69"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(embedded_fonts no)
-		)
-		(symbol "My_Library:ECS-TXO-2520-33-500-AN-TR"
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(in_pos_files yes)
-			(duplicate_pin_numbers_are_jumpers no)
-			(property "Reference" "U"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Value" ""
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Footprint" "My_Library:ECS-TXO-2520-33-500-AN-TR"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Datasheet" "https://www.mouser.jp/ProductDetail/ECS/ECS-TXO-2520-33-500-AN-TR?qs=byeeYqUIh0PNgpSP3dWrKg%3D%3D"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Description" ""
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(symbol "ECS-TXO-2520-33-500-AN-TR_1_1"
-				(rectangle
-					(start -3.81 7.62)
-					(end 11.43 -7.62)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type background)
-					)
-				)
-				(text "ECS-2520"
-					(at 6.35 -3.048 0)
-					(effects
-						(font
-							(size 1.27 1.27)
-						)
-					)
-				)
-				(pin input line
-					(at 2.54 10.16 270)
-					(length 2.54)
-					(name "Tri_state"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin input line
-					(at 0 -10.16 90)
-					(length 2.54)
-					(name "GND"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin input line
-					(at 13.97 0 180)
-					(length 2.54)
-					(name "Output"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "3"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin input line
-					(at 0 10.16 270)
-					(length 2.54)
-					(name "VDD"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "4"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -9496,12 +9570,6 @@
 		(uuid "aa241f37-26b6-4d49-8a77-f59a35940677")
 	)
 	(junction
-		(at 34.29 80.01)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "ac44d8ac-0e64-4628-bd83-153ebb5de84b")
-	)
-	(junction
 		(at 43.18 271.78)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -9652,12 +9720,6 @@
 		(uuid "e525e50c-1409-4315-88a1-53fe35c69a87")
 	)
 	(junction
-		(at 34.29 53.34)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "ea9790d3-eeec-44fb-8af6-9bfbb1e59f2b")
-	)
-	(junction
 		(at 350.52 62.23)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -9734,10 +9796,6 @@
 	(no_connect
 		(at 139.7 104.14)
 		(uuid "d42af7fa-6b1b-4ebf-b4da-bd6ccc420aed")
-	)
-	(no_connect
-		(at 88.9 66.04)
-		(uuid "dad5f595-8703-4a8b-a4f6-5826742cff50")
 	)
 	(no_connect
 		(at 297.18 82.55)
@@ -9838,16 +9896,6 @@
 	)
 	(wire
 		(pts
-			(xy 21.59 53.34) (xy 34.29 53.34)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "05c3fa91-ab85-49e3-a675-b16f083585cd")
-	)
-	(wire
-		(pts
 			(xy 81.28 265.43) (xy 81.28 271.78)
 		)
 		(stroke
@@ -9885,6 +9933,16 @@
 			(type default)
 		)
 		(uuid "084a6d95-43e0-4bff-a028-00cc37aaea4f")
+	)
+	(wire
+		(pts
+			(xy 34.29 69.85) (xy 34.29 63.5)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0885919e-54bf-4825-a8b0-290e80884636")
 	)
 	(wire
 		(pts
@@ -10368,16 +10426,6 @@
 	)
 	(wire
 		(pts
-			(xy 21.59 60.96) (xy 21.59 80.01)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "25700224-d97a-429a-b76f-4ad2efda85c1")
-	)
-	(wire
-		(pts
 			(xy 213.36 240.03) (xy 200.66 240.03)
 		)
 		(stroke
@@ -10855,16 +10903,6 @@
 			(type default)
 		)
 		(uuid "3e01a2c0-5d39-4b60-97d8-1a6f70b93d37")
-	)
-	(wire
-		(pts
-			(xy 36.83 58.42) (xy 36.83 53.34)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "3e3f470e-d61c-4111-a0d4-96b9d9d4ee8d")
 	)
 	(wire
 		(pts
@@ -11848,16 +11886,6 @@
 	)
 	(wire
 		(pts
-			(xy 34.29 78.74) (xy 34.29 80.01)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "7676bb74-f41a-40cc-9d72-9343a6fb5738")
-	)
-	(wire
-		(pts
 			(xy 330.2 242.57) (xy 330.2 243.84)
 		)
 		(stroke
@@ -12138,16 +12166,6 @@
 	)
 	(wire
 		(pts
-			(xy 36.83 53.34) (xy 34.29 53.34)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "842aa7a5-a823-4df0-aba3-b57044db4b24")
-	)
-	(wire
-		(pts
 			(xy 245.11 113.03) (xy 245.11 118.11)
 		)
 		(stroke
@@ -12258,6 +12276,16 @@
 	)
 	(wire
 		(pts
+			(xy 34.29 63.5) (xy 88.9 63.5)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8c3806ee-41b6-47c7-baf2-82d509ba939c")
+	)
+	(wire
+		(pts
 			(xy 91.44 176.53) (xy 91.44 177.8)
 		)
 		(stroke
@@ -12345,16 +12373,6 @@
 			(type default)
 		)
 		(uuid "913c3913-c942-4480-b6b1-e56fdb1c097c")
-	)
-	(wire
-		(pts
-			(xy 21.59 80.01) (xy 34.29 80.01)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "91e1974a-d9b1-48a8-897b-0881663c0e8b")
 	)
 	(wire
 		(pts
@@ -12888,6 +12906,16 @@
 	)
 	(wire
 		(pts
+			(xy 88.9 66.04) (xy 41.91 66.04)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ac05ed9c-5a9d-4c39-945b-76e703842614")
+	)
+	(wire
+		(pts
 			(xy 52.07 213.36) (xy 52.07 214.63)
 		)
 		(stroke
@@ -13278,6 +13306,16 @@
 	)
 	(wire
 		(pts
+			(xy 41.91 66.04) (xy 41.91 69.85)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "bfa6b656-17bd-4a58-8700-f312ba1e4788")
+	)
+	(wire
+		(pts
 			(xy 361.95 53.34) (xy 361.95 44.45)
 		)
 		(stroke
@@ -13408,16 +13446,6 @@
 	)
 	(wire
 		(pts
-			(xy 34.29 50.8) (xy 34.29 53.34)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "c5f8019c-a657-43b5-8d00-c964c30c5052")
-	)
-	(wire
-		(pts
 			(xy 241.3 245.11) (xy 229.87 245.11)
 		)
 		(stroke
@@ -13475,16 +13503,6 @@
 			(type default)
 		)
 		(uuid "c9bebea8-0cf1-4b65-81a1-c1e81b215f44")
-	)
-	(wire
-		(pts
-			(xy 21.59 53.34) (xy 21.59 55.88)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "c9f14210-5146-48d1-8d3d-efe2c6a0c4b5")
 	)
 	(wire
 		(pts
@@ -13918,16 +13936,6 @@
 	)
 	(wire
 		(pts
-			(xy 34.29 80.01) (xy 34.29 81.28)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "e689aa41-6f10-43ef-8d04-578799a9eab2")
-	)
-	(wire
-		(pts
 			(xy 168.91 236.22) (xy 168.91 237.49)
 		)
 		(stroke
@@ -14005,16 +14013,6 @@
 			(type default)
 		)
 		(uuid "e8fc10f0-3c85-4364-8b6d-4465d1089048")
-	)
-	(wire
-		(pts
-			(xy 34.29 53.34) (xy 34.29 58.42)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "e92103a2-fc44-4eea-a07e-c569e6c60cac")
 	)
 	(wire
 		(pts
@@ -14804,30 +14802,6 @@
 			)
 		)
 	)
-	(global_label "OSC"
-		(shape input)
-		(at 88.9 63.5 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "1c849ff3-be0c-4f50-99a3-0bdd1f9aad81")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 82.1048 63.5 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-	)
 	(global_label "LIMS3_1"
 		(shape input)
 		(at 139.7 101.6 0)
@@ -15513,30 +15487,6 @@
 		(uuid "608fcd83-97f2-47dc-843d-eac498467307")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 238.7818 267.97 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-	)
-	(global_label "OSC"
-		(shape input)
-		(at 48.26 68.58 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "66af9c6b-4079-4346-84f3-ff880ba6ef88")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 55.0552 68.58 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -23688,84 +23638,6 @@
 		)
 	)
 	(symbol
-		(lib_id "power:+3.3V")
-		(at 34.29 50.8 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "44bb3a8f-539b-48a8-bdfb-03f81279e243")
-		(property "Reference" "#PWR65"
-			(at 34.29 54.61 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "+3.3V"
-			(at 34.29 45.72 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 34.29 50.8 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 34.29 50.8 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"+3.3V\""
-			(at 34.29 50.8 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "23d0ddef-118d-40a5-807e-8366d6f7d4f1")
-		)
-		(instances
-			(project "ESC_Device_Hub_v0"
-				(path "/a83e56d8-9142-4592-a705-3518707c865f"
-					(reference "#PWR65")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Device:R")
 		(at 350.52 57.15 0)
 		(unit 1)
@@ -25344,6 +25216,89 @@
 		)
 	)
 	(symbol
+		(lib_id "Device:Crystal_GND2")
+		(at 38.1 69.85 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "5afe198f-8c45-4047-9f0b-e50479651ac7")
+		(property "Reference" "Y2"
+			(at 38.1 62.23 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "Crystal_GND2"
+			(at 38.1 64.77 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Crystal:Resonator_SMD_Murata_CSTxExxV-3Pin_3.0x1.1mm"
+			(at 38.1 69.85 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 38.1 69.85 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Three pin crystal, GND on pin 2"
+			(at 38.1 69.85 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "1f40575a-8747-4fec-b9df-5ba1e0563f8e")
+		)
+		(pin "2"
+			(uuid "a1a5427b-bc80-4920-a167-86d24924ca0e")
+		)
+		(pin "3"
+			(uuid "cd41fcd8-8432-4053-90fd-209de7f9cb4a")
+		)
+		(instances
+			(project "ESC_Device_Hub_v0"
+				(path "/a83e56d8-9142-4592-a705-3518707c865f"
+					(reference "Y2")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:VDD")
 		(at 218.44 62.23 0)
 		(unit 1)
@@ -25720,143 +25675,6 @@
 			(project "ESC_Device_Hub_v0"
 				(path "/a83e56d8-9142-4592-a705-3518707c865f"
 					(reference "#PWR091")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C_Small")
-		(at 21.59 58.42 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "5de3342b-f04d-4de2-a819-9ec875d1e014")
-		(property "Reference" "C29"
-			(at 24.13 57.1562 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "0.1uF"
-			(at 24.13 59.6962 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder"
-			(at 21.59 58.42 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 21.59 58.42 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Unpolarized capacitor, small symbol"
-			(at 21.59 58.42 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Height" ""
-			(at 21.59 58.42 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Manufacturer_Name" ""
-			(at 21.59 58.42 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Manufacturer_Part_Number" ""
-			(at 21.59 58.42 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Mouser Part Number" ""
-			(at 21.59 58.42 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Mouser Price/Stock" ""
-			(at 21.59 58.42 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "4e7404d3-5f1e-429a-86c5-f7fc395a6586")
-		)
-		(pin "2"
-			(uuid "c4b9e979-ec05-4fc9-a9a6-8038d8cbccb5")
-		)
-		(instances
-			(project "ESC_Device_Hub_v0"
-				(path "/a83e56d8-9142-4592-a705-3518707c865f"
-					(reference "C29")
 					(unit 1)
 				)
 			)
@@ -27987,7 +27805,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Connector_JST:JST_XH_S4B-XH-A_1x04_P2.50mm_Horizontal"
+		(property "Footprint" "Connector_JST:JST_XH_B4B-XH-A_1x04_P2.50mm_Vertical"
 			(at 383.54 215.9 0)
 			(hide yes)
 			(show_name no)
@@ -28517,7 +28335,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Connector_JST:JST_XH_S4B-XH-A_1x04_P2.50mm_Horizontal"
+		(property "Footprint" "Connector_JST:JST_XH_B4B-XH-A_1x04_P2.50mm_Vertical"
 			(at 383.54 236.22 0)
 			(hide yes)
 			(show_name no)
@@ -30243,6 +30061,84 @@
 		)
 	)
 	(symbol
+		(lib_id "power:GND")
+		(at 38.1 74.93 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "8fcd12da-a513-4e3a-9551-98d5c89be803")
+		(property "Reference" "#PWR0111"
+			(at 38.1 81.28 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GND"
+			(at 38.1 80.01 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 38.1 74.93 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 38.1 74.93 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 38.1 74.93 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "7f58f729-fb58-4d34-8092-300a2b3eeb7d")
+		)
+		(instances
+			(project "ESC_Device_Hub_v0"
+				(path "/a83e56d8-9142-4592-a705-3518707c865f"
+					(reference "#PWR0111")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Connector_Generic:Conn_01x06")
 		(at 223.52 270.51 180)
 		(unit 1)
@@ -31719,84 +31615,6 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 34.29 81.28 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "9dc5f484-01e9-481f-b2e8-f755c1e66b8c")
-		(property "Reference" "#PWR64"
-			(at 34.29 87.63 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "GND"
-			(at 34.29 86.36 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 34.29 81.28 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 34.29 81.28 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 34.29 81.28 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "cc43adef-08dc-4a27-8b46-d2ce36a762f0")
-		)
-		(instances
-			(project "ESC_Device_Hub_v0"
-				(path "/a83e56d8-9142-4592-a705-3518707c865f"
-					(reference "#PWR64")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:GND")
 		(at 213.36 246.38 0)
 		(mirror y)
 		(unit 1)
@@ -32805,149 +32623,6 @@
 			(project "ESC_Device_Hub_v0"
 				(path "/a83e56d8-9142-4592-a705-3518707c865f"
 					(reference "#PWR070")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "My_Library:ECS-TXO-2520-33-500-AN-TR")
-		(at 34.29 68.58 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "a7e7ea79-d3c6-4e38-950e-c3bcc4d448bc")
-		(property "Reference" "U17"
-			(at 29.21 67.9449 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Value" ""
-			(at 29.21 69.85 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Footprint" "My_Library:ECS-TXO-2520-33-500-AN-TR"
-			(at 34.29 68.58 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" "https://www.mouser.jp/ProductDetail/ECS/ECS-TXO-2520-33-500-AN-TR?qs=byeeYqUIh0PNgpSP3dWrKg%3D%3D"
-			(at 34.29 68.58 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 34.29 68.58 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Height" ""
-			(at 34.29 68.58 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Manufacturer_Name" ""
-			(at 34.29 68.58 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Manufacturer_Part_Number" ""
-			(at 34.29 68.58 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Mouser Part Number" ""
-			(at 34.29 68.58 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Mouser Price/Stock" ""
-			(at 34.29 68.58 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "60c263c2-6fa9-4083-b50c-69426eb42793")
-		)
-		(pin "4"
-			(uuid "411883f6-4de6-4abf-8037-3c81b8a402a9")
-		)
-		(pin "3"
-			(uuid "58cd59ff-b2fd-4283-8485-5be4014a44dc")
-		)
-		(pin "2"
-			(uuid "b61c9429-c2ef-4305-9833-15218bcd40b1")
-		)
-		(instances
-			(project "ESC_Device_Hub_v0"
-				(path "/a83e56d8-9142-4592-a705-3518707c865f"
-					(reference "U17")
 					(unit 1)
 				)
 			)
