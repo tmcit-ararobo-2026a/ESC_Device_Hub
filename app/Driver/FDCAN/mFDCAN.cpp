@@ -2,7 +2,7 @@
 #include "mFDCAN.hpp"
 #include "mFDCAN_data_template.hpp"
 
-bool mFDCAN_Class::Init(fdcan_setting_Handle_TypeDef *set)
+bool mFDCAN_Class::Init(fdcan_setting_HandleTypeDef *set)
 {
     FDCAN_FilterTypeDef FDCAN_filter;
     bool using_error;
@@ -174,7 +174,7 @@ bool mFDCAN_Class::Init(fdcan_setting_Handle_TypeDef *set)
 /*----------------------------------------------------------------------------------------------------*/
 
 
-bool mFDCAN_Class::Send(fdcan_TxData_Handle_TypeDef *data)
+bool mFDCAN_Class::Send(fdcan_TxData_HandleTypeDef *data)
 {
     FDCAN_TxHeaderTypeDef FDCAN_TxHeader;
     FDCAN_HandleTypeDef *hfdcanx;
@@ -183,33 +183,33 @@ bool mFDCAN_Class::Send(fdcan_TxData_Handle_TypeDef *data)
     switch(data->FDCAN_Port)
     {
         case fdcan_ports::FDCAN1_Port:
-            hfdcanx = FDCAN_Port1_set.hfdcanx;
-            hfdcan_frame = FDCAN_Port1_set.hfdcan_frame;
             if(FDCAN_Port1_Stack.tx_events > 15)
             {
                 State.Send.User_TxFifo_full_Port = 1;
                 return 1;
             }
+            hfdcanx = FDCAN_Port1_set.hfdcanx;
+            hfdcan_frame = FDCAN_Port1_set.hfdcan_frame;
         break;
         
         case fdcan_ports::FDCAN2_Port:
-            hfdcanx = FDCAN_Port2_set.hfdcanx;
-            hfdcan_frame = FDCAN_Port2_set.hfdcan_frame;
             if(FDCAN_Port2_Stack.tx_events > 15)
             {
                 State.Send.User_TxFifo_full_Port = 1;
                 return 1;
             }
+            hfdcanx = FDCAN_Port2_set.hfdcanx;
+            hfdcan_frame = FDCAN_Port2_set.hfdcan_frame;
         break;
         
         case fdcan_ports::FDCAN3_Port:
-            hfdcanx = FDCAN_Port3_set.hfdcanx;
-            hfdcan_frame = FDCAN_Port3_set.hfdcan_frame;
             if(FDCAN_Port3_Stack.tx_events > 15)
             {
                 State.Send.User_TxFifo_full_Port = 1;
                 return 1;
             }
+            hfdcanx = FDCAN_Port3_set.hfdcanx;
+            hfdcan_frame = FDCAN_Port3_set.hfdcan_frame;
         break;
     }
 
@@ -315,7 +315,7 @@ bool mFDCAN_Class::Enable_timeout(fdcan_ports port)
 /*----------------------------------------------------------------------------------------------------*/
 
 
-void mFDCAN_Class::TxCallback(fdcan_CallBack_Handle_TypeDef *data)
+void mFDCAN_Class::TxCallback(fdcan_CallBack_HandleTypeDef *data)
 {
     if(data->State == FDCAN_IT_TX_COMPLETE)
     {
@@ -342,7 +342,7 @@ void mFDCAN_Class::TxCallback(fdcan_CallBack_Handle_TypeDef *data)
 /*----------------------------------------------------------------------------------------------------*/
 
 
-void mFDCAN_Class::RxCallback_Fifo0(fdcan_CallBack_Handle_TypeDef *data)
+void mFDCAN_Class::RxCallback_Fifo0(fdcan_CallBack_HandleTypeDef *data)
 {
 
     FDCAN_RxHeaderTypeDef FDCAN_RxHeader;
@@ -415,7 +415,7 @@ void mFDCAN_Class::RxCallback_Fifo0(fdcan_CallBack_Handle_TypeDef *data)
 /*----------------------------------------------------------------------------------------------------*/
 
 
-void mFDCAN_Class::RxCallback_Fifo1(fdcan_CallBack_Handle_TypeDef *data)
+void mFDCAN_Class::RxCallback_Fifo1(fdcan_CallBack_HandleTypeDef *data)
 {
 
     FDCAN_RxHeaderTypeDef FDCAN_RxHeader;

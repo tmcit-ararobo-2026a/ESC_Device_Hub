@@ -2,22 +2,24 @@
 #include "main_FW.hpp"
 
 void mmain_FW_Class::setup(){
-    fdcan1_setting.hfdcanx = &hfdcan1;
-    fdcan1_setting.hfdcan_port = mFDCAN_template_Class::fdcan_ports::FDCAN1_Port;
-    fdcan1_setting.fifo_num = mFDCAN_template_Class::Fifo_num_type::FIFO0;
-    fdcan1_setting.RxTimeOutCycle_ms = 5;
-    fdcan1_setting.bit_rate = mFDCAN_template_Class::bit_rate_type::_1Mbps_;
-    if(mFDCAN.Init(&fdcan1_setting))
+    fdcan_main_setting.hfdcanx = &hfdcan1;
+    fdcan_main_setting.hfdcan_port = mFDCAN_template_Class::fdcan_ports::FDCAN1_Port;
+    fdcan_main_setting.fifo_num = mFDCAN_template_Class::Fifo_num_type::FIFO0;
+    fdcan_main_setting.hfdcan_frame = mFDCAN_template_Class::can_frame_type::fdcan;
+    fdcan_main_setting.RxTimeOutCycle_ms = 5;
+    fdcan_main_setting.bit_rate = mFDCAN_template_Class::bit_rate_type::_1Mbps_;
+    if(mFDCAN.Init(&fdcan_main_setting))
     {
         /*エラー処理を書く*/
     }
 
-    fdcan2_setting.hfdcanx = &hfdcan2;
-    fdcan2_setting.hfdcan_port = mFDCAN_template_Class::fdcan_ports::FDCAN2_Port;
-    fdcan2_setting.fifo_num = mFDCAN_template_Class::Fifo_num_type::FIFO1;
-    fdcan2_setting.RxTimeOutCycle_ms = 0;
-    fdcan2_setting.bit_rate = mFDCAN_template_Class::bit_rate_type::_1Mbps_;
-    if(mFDCAN.Init(&fdcan2_setting))
+    fdcan_esc_setting.hfdcanx = &hfdcan2;
+    fdcan_esc_setting.hfdcan_port = mFDCAN_template_Class::fdcan_ports::FDCAN2_Port;
+    fdcan_esc_setting.fifo_num = mFDCAN_template_Class::Fifo_num_type::FIFO1;
+    fdcan_main_setting.hfdcan_frame = mFDCAN_template_Class::can_frame_type::classic_can;
+    fdcan_esc_setting.RxTimeOutCycle_ms = 0;
+    fdcan_esc_setting.bit_rate = mFDCAN_template_Class::bit_rate_type::_1Mbps_;
+    if(mFDCAN.Init(&fdcan_esc_setting))
     {
         /*エラー処理を書く*/
     }

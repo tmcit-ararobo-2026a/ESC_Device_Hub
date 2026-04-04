@@ -13,7 +13,7 @@ public:
     /**
      * ユーザー指定のport
      * 使い方はhfdcan3をport1と指定して読みやすくする
-     * typedefは下のfdcan_setting_Handle_TypeDefを使う
+     * typedefは下のfdcan_setting_HandleTypeDefを使う
      */
 
     enum class can_frame_type : uint8_t{
@@ -45,7 +45,7 @@ public:
         can_frame_type hfdcan_frame;   // can frame
         uint16_t RxTimeOutCycle_ms;    // 0:Disable | 1 = 0xFFFF enable value ms
         bit_rate_type bit_rate; /*通信速度*/
-    } fdcan_setting_Handle_TypeDef;
+    } fdcan_setting_HandleTypeDef;
     /**
      * hfdcanxにhfdcanを入れる
      * hfdcan_portにfdcan_portsの値を入れる
@@ -59,7 +59,7 @@ public:
         uint32_t Id;
         uint8_t Len;
         uint8_t* data_p;/*64Byteで作れ*/
-    } fdcan_TxData_Handle_TypeDef;
+    } fdcan_TxData_HandleTypeDef;
 
     typedef struct {
         struct {
@@ -81,7 +81,7 @@ public:
         } TxCallBack;  // In TxCallBack Function
         struct {
         } RxCallBack;  // In RxCallBack Function
-    } fdcan_State_Handle_TypeDef;
+    } fdcan_State_HandleTypeDef;
     /**
      * error_flag
      * 1 = Error
@@ -109,7 +109,7 @@ protected:
     typedef struct {
         FDCAN_HandleTypeDef* hfdcanx;
         uint32_t State;
-    } fdcan_CallBack_Handle_TypeDef;
+    } fdcan_CallBack_HandleTypeDef;
 
     static constexpr uint32_t dlc_table[16] = {
         FDCAN_DLC_BYTES_0,
