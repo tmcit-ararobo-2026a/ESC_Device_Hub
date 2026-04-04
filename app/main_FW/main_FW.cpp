@@ -2,26 +2,41 @@
 #include "main_FW.hpp"
 
 void mmain_FW_Class::setup(){
-    fdcan_main_setting.hfdcanx = &hfdcan1;
-    fdcan_main_setting.hfdcan_port = mFDCAN_template_Class::fdcan_ports::FDCAN1_Port;
-    fdcan_main_setting.fifo_num = mFDCAN_template_Class::Fifo_num_type::FIFO0;
-    fdcan_main_setting.hfdcan_frame = mFDCAN_template_Class::can_frame_type::fdcan;
-    fdcan_main_setting.RxTimeOutCycle_ms = 5;
-    fdcan_main_setting.bit_rate = mFDCAN_template_Class::bit_rate_type::_1Mbps_;
-    if(mFDCAN.Init(&fdcan_main_setting))
-    {
-        /*エラー処理を書く*/
-    }
+
+    //gn10_can::drivers::DriverSTM32CAN fdcan_main;
+    //gn10_can::CANBus can_bus(fdcan_main);
+    //gn10_can::devices::
 
     fdcan_esc_setting.hfdcanx = &hfdcan2;
     fdcan_esc_setting.hfdcan_port = mFDCAN_template_Class::fdcan_ports::FDCAN2_Port;
     fdcan_esc_setting.fifo_num = mFDCAN_template_Class::Fifo_num_type::FIFO1;
-    fdcan_main_setting.hfdcan_frame = mFDCAN_template_Class::can_frame_type::classic_can;
+    fdcan_esc_setting.hfdcan_frame = mFDCAN_template_Class::can_frame_type::classic_can;
     fdcan_esc_setting.RxTimeOutCycle_ms = 0;
     fdcan_esc_setting.bit_rate = mFDCAN_template_Class::bit_rate_type::_1Mbps_;
     if(mFDCAN.Init(&fdcan_esc_setting))
     {
         /*エラー処理を書く*/
+    }
+
+    HAL_TIM_Base_Start(&htim2); //10kHz
+    HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_4);//Output PWM
+    HAL_TIM_Base_Start(&htim6); //1kHz
+
+    if(HAL_TIM_Encoder_Start(&htim8, TIM_CHANNEL_ALL) != HAL_OK)
+    {
+        /*エラーだよ ENC1*/
+    }
+    if(HAL_TIM_Encoder_Start(&htim1, TIM_CHANNEL_ALL) != HAL_OK)
+    {
+        /*エラーだよ ENC2*/
+    }
+    if(HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL) != HAL_OK)
+    {
+        /*エラーだよ ENC3*/
+    }
+    if(HAL_TIM_Encoder_Start(&htim4, TIM_CHANNEL_ALL) != HAL_OK)
+    {
+        /*エラーだよ ENC4*/
     }
 
     mFDCAN.Enable_timeout(mFDCAN_template_Class::fdcan_ports::FDCAN1_Port);
@@ -41,7 +56,16 @@ void mmain_FW_Class::loop(){
 
 }
 
-void mFDCAN_Class::Callback_Port1(uint32_t Id, uint8_t *data_p, uint8_t Len){
+inline void mmain_FW_Class::Get_Encoder(){
+
+    Encoder_Count_Port1 = __HAL_TIM_GET_COUNTER(&htim8);
+
+    Encoder_Count_Port2 = __HAL_TIM_GET_COUNTER(&htim1);
+
+    Encoder_Count_Port3 = __HAL_TIM_GET_COUNTER(&htim3);
+
+    Encoder_Count_Port4 = __HAL_TIM_GET_COUNTER(&htim4);
+
 
 }
 
@@ -49,8 +73,43 @@ void mFDCAN_Class::Callback_Port2(uint32_t Id, uint8_t *data_p, uint8_t Len){
 
 }
 
-void mFDCAN_Class::Callback_Port3(uint32_t Id, uint8_t *data_p, uint8_t Len){
+mmain_FW_Class mmain_FW;
+
+extern "C"
+{
+
+    void HAL_RTCEx_WakeUpTimerEventCallback(RTC_HandleTypeDef *hrtc)
+    {
+        /**
+         * 1 Hzの割り込み 
+         */
+
+        mmain_FW.Get_Encoder();
+        mmain_FW.NVIC_1Hz = 1;
+    }
+
+    void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+    {
+        if(htim == &htim2)
+        {
+            /**
+             * 10 kHzの割り込み 
+             */
+
+            mmain_FW.Get_Encoder();
+            mmain_FW.NVIC_1kHz = 1;
+        }
+        
+        if(htim == &htim6)
+        {
+            /**
+             * 1 kHzの割り込み 
+             */
+
+            mmain_FW.Get_Encoder();
+            mmain_FW.NVIC_10kHz = 1;
+        }
+    }
+
 
 }
-
-mmain_FW_Class mmain_FW;

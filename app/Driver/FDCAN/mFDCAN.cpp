@@ -221,21 +221,31 @@ bool mFDCAN_Class::Send(fdcan_TxData_HandleTypeDef *data)
 
     if(hfdcan_frame == can_frame_type::classic_can)
     {
-        if(data->Len > 8) data->Len = 8;
+        if(data->Len > 8)
+        {
+            State.Send.over_Data_Len = 1;
+            return;
+        }
         if(data->Id > 0x7FF)
         {
             State.Send.over_Id_value = 1;
             return 0;
         }
+        FDCAN_TxHeader.FDFormat = FDCAN_CLASSIC_CAN;
     }
     else if(hfdcan_frame == can_frame_type::fdcan)
     {
-        if(data->Len > 64) data->Len = 64;
+        if(data->Len > 64)
+        {
+            State.Send.over_Data_Len = 1;
+            return;
+        }
         if(data->Id > 0x1FFFFFFF)
         {
             State.Send.over_Id_value = 1;
             return 0;
         }
+        FDCAN_TxHeader.FDFormat = FDCAN_FD_CAN;
     }
 
     FDCAN_TxHeader.Identifier = data->Id;
@@ -244,7 +254,7 @@ bool mFDCAN_Class::Send(fdcan_TxData_HandleTypeDef *data)
     FDCAN_TxHeader.DataLength = Data_len(data->Len);
     FDCAN_TxHeader.ErrorStateIndicator = FDCAN_ESI_ACTIVE;
     FDCAN_TxHeader.BitRateSwitch = FDCAN_BRS_OFF;
-    FDCAN_TxHeader.FDFormat = FDCAN_FD_CAN;
+    //FDCAN_TxHeader.FDFormat
     FDCAN_TxHeader.TxEventFifoControl = FDCAN_STORE_TX_EVENTS;
     FDCAN_TxHeader.MessageMarker = 0;
 
@@ -494,7 +504,8 @@ __weak void mFDCAN_Class::Callback_Port3(uint32_t Id, uint8_t *data_p, uint8_t L
 
 mFDCAN_Class mFDCAN;
 
-extern "C"{
+extern "C"
+{
 
 
     /*----------------------------------------------------------------------------------------------------*/

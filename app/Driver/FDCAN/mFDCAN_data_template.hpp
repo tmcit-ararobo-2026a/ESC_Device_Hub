@@ -75,6 +75,7 @@ public:
             bool User_TxFifo_full_Port;
             bool TxFifo_full_Port;
             bool over_Id_value;
+            bool over_Data_Len;
             bool Add_New_TxMessage;
         } Send;  // In Send Function
         struct {
