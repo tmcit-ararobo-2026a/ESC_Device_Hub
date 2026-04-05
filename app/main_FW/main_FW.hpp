@@ -5,7 +5,7 @@
 #include "main.h"
 #include "mFDCAN.hpp"
 
-class mmain_FW_Class {
+class mmain_FW_Class{
     public:
         void setup();
         void loop();
@@ -19,6 +19,15 @@ class mmain_FW_Class {
         volatile bool NVIC_1Hz;
         volatile bool NVIC_1kHz;
         volatile bool NVIC_10kHz;
+        volatile bool NVIC_main_FDCAN;
+        volatile bool NVIC_esc_CAN;
+
+        struct CAN_Callback{
+            uint32_t Id;
+            uint8_t Len;
+            uint8_t Data[64];
+            uint8_t *Data_p;
+        }CAN_Data;
 
         /*TypeDef_Start*/
         mFDCAN_template_Class::fdcan_setting_HandleTypeDef fdcan_esc_setting;

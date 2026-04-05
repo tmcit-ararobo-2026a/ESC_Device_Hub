@@ -1,7 +1,8 @@
 
 #include "main_FW.hpp"
 
-void mmain_FW_Class::setup(){
+void mmain_FW_Class::setup()
+{
 
     //gn10_can::drivers::DriverSTM32CAN fdcan_main;
     //gn10_can::CANBus can_bus(fdcan_main);
@@ -11,7 +12,7 @@ void mmain_FW_Class::setup(){
     fdcan_esc_setting.hfdcan_port = mFDCAN_template_Class::fdcan_ports::FDCAN2_Port;
     fdcan_esc_setting.fifo_num = mFDCAN_template_Class::Fifo_num_type::FIFO1;
     fdcan_esc_setting.hfdcan_frame = mFDCAN_template_Class::can_frame_type::classic_can;
-    fdcan_esc_setting.RxTimeOutCycle_ms = 0;
+    fdcan_esc_setting.RxTimeOutCycle_ms = 5;
     fdcan_esc_setting.bit_rate = mFDCAN_template_Class::bit_rate_type::_1Mbps_;
     if(mFDCAN.Init(&fdcan_esc_setting))
     {
@@ -39,8 +40,12 @@ void mmain_FW_Class::setup(){
         /*エラーだよ ENC4*/
     }
 
-    mFDCAN.Enable_timeout(mFDCAN_template_Class::fdcan_ports::FDCAN1_Port);
-    mFDCAN.Enable_timeout(mFDCAN_template_Class::fdcan_ports::FDCAN2_Port);
+    CAN_Data.Data_p = CAN_Data.Data;
+
+    if(mFDCAN.Enable_timeout(mFDCAN_template_Class::fdcan_ports::FDCAN2_Port))
+    {
+        /*エラー*/
+    }
 
     fdcan_txdata.FDCAN_Port = mFDCAN_template_Class::fdcan_ports::FDCAN1_Port;
     fdcan_txdata.Id = 0x00;
@@ -52,11 +57,40 @@ void mmain_FW_Class::setup(){
     }
 }
 
-void mmain_FW_Class::loop(){
+void mmain_FW_Class::loop()
+{
+    if(NVIC_1Hz)
+    {
+        NVIC_1Hz = 0;
+    }
 
+    if(NVIC_1kHz)
+    {
+
+        NVIC_1kHz = 0;
+    }
+
+    if(NVIC_10kHz)
+    {
+
+        NVIC_10kHz = 0;
+    }
+
+    if(NVIC_main_FDCAN)
+    {
+
+        NVIC_main_FDCAN = 0;
+    }
+
+    if(NVIC_esc_CAN)
+    {
+
+        NVIC_esc_CAN = 0;
+    }
 }
 
-inline void mmain_FW_Class::Get_Encoder(){
+inline void mmain_FW_Class::Get_Encoder()
+{
 
     Encoder_Count_Port1 = __HAL_TIM_GET_COUNTER(&htim8);
 
@@ -66,14 +100,19 @@ inline void mmain_FW_Class::Get_Encoder(){
 
     Encoder_Count_Port4 = __HAL_TIM_GET_COUNTER(&htim4);
 
-
-}
-
-void mFDCAN_Class::Callback_Port2(uint32_t Id, uint8_t *data_p, uint8_t Len){
-
 }
 
 mmain_FW_Class mmain_FW;
+
+void mFDCAN_Class::Callback_Port2(uint32_t Id, uint8_t *data_p, uint8_t Len)
+{
+
+    mmain_FW.CAN_Data.Id = Id;
+    mmain_FW.CAN_Data.Data_p = data_p;
+    mmain_FW.CAN_Data.Len = Len;
+    mmain_FW.NVIC_esc_CAN = 1;
+    
+}
 
 extern "C"
 {

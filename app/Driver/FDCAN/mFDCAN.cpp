@@ -224,7 +224,7 @@ bool mFDCAN_Class::Send(fdcan_TxData_HandleTypeDef *data)
         if(data->Len > 8)
         {
             State.Send.over_Data_Len = 1;
-            return;
+            return 1;
         }
         if(data->Id > 0x7FF)
         {
@@ -238,7 +238,7 @@ bool mFDCAN_Class::Send(fdcan_TxData_HandleTypeDef *data)
         if(data->Len > 64)
         {
             State.Send.over_Data_Len = 1;
-            return;
+            return 1;
         }
         if(data->Id > 0x1FFFFFFF)
         {
