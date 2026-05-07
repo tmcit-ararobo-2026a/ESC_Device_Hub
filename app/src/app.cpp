@@ -6,6 +6,7 @@
 #include "gn10_can/core/can_bus.hpp"
 
 gn10_can::drivers::DriverSTM32FDCAN main_bus_fdcan(&hfdcan1);
+gn10_can::CANBus::CANBus(main_bus_fdcan);
 maidui3_hal::Drivers::XCAN::xcan esc_bus_can(&hfdcan2);
 
 void setup()
