@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../../maidui3_hal/Drivers/FDCAN/mXCAN_manager.hpp"
+#include "../../maidui3_hal/Drivers/FDCAN/mXCAN.hpp"
 #include "gn10_can/drivers/fdcan_driver_interface.hpp"
 #include "main.h"
 
@@ -11,7 +11,10 @@ namespace drivers {
 class DriverSTM32FDCAN : public IFDCANDriver
 {
 public:
-    DriverSTM32FDCAN(FDCAN_HandleTypeDef* hfdcan) {}
+    DriverSTM32FDCAN(FDCAN_HandleTypeDef* hfdcan)
+    {
+        main_silent_fdcan.set_FDCAN_HandleTypedef(hfdcan);
+    }
 
     bool init();
     bool send(const FDCANFrame& frame) override;
