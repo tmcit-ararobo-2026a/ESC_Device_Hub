@@ -1,5 +1,5 @@
 
-#include "app/driver_fdcan.hpp"
+#include "driver_fdcan.hpp"
 
 namespace gn10_can {
 namespace drivers {

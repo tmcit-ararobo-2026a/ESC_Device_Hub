@@ -1,9 +1,9 @@
 
-#include "app/app.h"
+#include "app.h"
 
-#include "app/driver_fdcan.hpp"
+#include "../maidui3_hal/Drivers/FDCAN/mXCAN.hpp"
+#include "driver_fdcan.hpp"
 #include "gn10_can/core/fdcan_bus.hpp"
-#include "maidui3_hal/Drivers/FDCAN/mXCAN.hpp"
 
 gn10_can::drivers::DriverSTM32FDCAN main_bus_fdcan(&hfdcan1);
 gn10_can::FDCANBus main_fdcan_bus(main_bus_fdcan);
@@ -49,7 +49,7 @@ void APP_Setup()
     c620.id     = c620_send_id_Fside;
     c620.len    = 8;
     c620.data_p = c620_data.data;
-    esc_bus_can.SendMessage(c620);
+    esc_bus_can.SendMessage(&c620);
 
     HAL_Delay(500);
 
