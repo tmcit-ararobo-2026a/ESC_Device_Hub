@@ -2,22 +2,31 @@
 #include "app.h"
 
 #include "../maidui3_hal/Drivers/FDCAN/mXCAN.hpp"
-#include "driver_fdcan.hpp"
-#include "gn10_can/core/fdcan_bus.hpp"
+// #include "driver_fdcan.hpp"
+//  #include "gn10_can/core/fdcan_bus.hpp"
 
-gn10_can::drivers::DriverSTM32FDCAN main_bus_fdcan(&hfdcan1);
-gn10_can::FDCANBus main_fdcan_bus(main_bus_fdcan);
+// gn10_can::drivers::DriverSTM32FDCAN main_bus_fdcan(&hfdcan1);
+// gn10_can::FDCANBus main_fdcan_bus(main_bus_fdcan);
 
 #define maidui3_xcan       maidui3_hal::Drivers::XCAN
 #define C620_bace_id       0x200
 #define c620_send_id_Fside 0x200
 #define c620_send_id_Lside 0x1FF
 
+maidui3_hal::Drivers::XCAN::xcan main_bus_can(
+    &hfdcan1,
+    maidui3_xcan::fifo::FIFO0,
+    maidui3_xcan::can_frame::Classic_CAN,
+    maidui3_xcan::id_filter_type::Non_mask_id,
+    2000,
+    1
+);
+
 maidui3_hal::Drivers::XCAN::xcan esc_bus_can(
     &hfdcan2,
     maidui3_xcan::fifo::FIFO1,
     maidui3_xcan::can_frame::Classic_CAN,
-    maidui3_xcan::id_filter_type::mask_four_id,
+    maidui3_xcan::id_filter_type::Non_mask_id,
     2000,
     1
 );
@@ -59,6 +68,10 @@ void APP_Setup()
         HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, GPIO_PIN_SET);
         while (1);
     } /*CANの初期化*/
+    if (main_bus_can.init()) {
+        HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, GPIO_PIN_SET);
+        while (1);
+    }
 
     c620.id     = c620_send_id_Fside;
     c620.len    = 8;
@@ -101,9 +114,14 @@ void APP_Setup()
 
 void APP_Loop()
 {
-    if (esc_bus_can.setup_type.callback_flag_.Rx_Callback) {
-        esc_bus_can.setup_type.callback_flag_.Rx_Callback = 0;
-    }
-
     HAL_GPIO_WritePin(LED_4_GPIO_Port, LED_4_Pin, GPIO_PIN_SET);
+
+    if (esc_bus_can.SendMessage(&c620)) {
+        HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, GPIO_PIN_SET);
+    }
+    HAL_Delay(100);
+    if (main_bus_can.SendMessage(&c620)) {
+        HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, GPIO_PIN_SET);
+    }
+    HAL_Delay(100);
 }
