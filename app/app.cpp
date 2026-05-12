@@ -19,7 +19,7 @@ maidui3_hal::Drivers::XCAN::xcan main_bus_can(
     maidui3_xcan::can_frame::Classic_CAN,
     maidui3_xcan::id_filter_type::Non_mask_id,
     0,
-    0
+    1
 );
 
 maidui3_hal::Drivers::XCAN::xcan esc_bus_can(
@@ -28,7 +28,7 @@ maidui3_hal::Drivers::XCAN::xcan esc_bus_can(
     maidui3_xcan::can_frame::Classic_CAN,
     maidui3_xcan::id_filter_type::Non_mask_id,
     0,
-    0
+    1
 );
 
 maidui3_xcan::hxcan_frame c620;
@@ -93,10 +93,12 @@ void APP_Setup()
     c620_send.value[2] = 0x00;
     c620_send.value[3] = 0x00;
 
+    HAL_Delay(10);
+
     if (esc_bus_can.SendMessage(&c620)) {
         HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, GPIO_PIN_SET);
     } /*全ESC停止*/
-
+    HAL_Delay(1000);
     if (main_bus_can.SendMessage(&c620)) {
         HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, GPIO_PIN_SET);
     }
@@ -118,15 +120,15 @@ void APP_Setup()
 
 void APP_Loop()
 {
-    HAL_GPIO_WritePin(LED_4_GPIO_Port, LED_4_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, GPIO_PIN_SET);
 
-    // if (esc_bus_can.SendMessage(&c620)) {
-    //     HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, GPIO_PIN_SET);
-    // }
-    // HAL_Delay(100);
-    // if (main_bus_can.SendMessage(&c620)) {
-    //     HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, GPIO_PIN_SET);
-    // }
+    if (esc_bus_can.SendMessage(&c620)) {
+        HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, GPIO_PIN_SET);
+    }
+    HAL_Delay(500);
+    if (main_bus_can.SendMessage(&c620)) {
+        HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, GPIO_PIN_SET);
+    }
 
-    HAL_Delay(100);
+    HAL_Delay(500);
 }
