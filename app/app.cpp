@@ -49,10 +49,10 @@ void APP_Setup()
 {
     HAL_Delay(10);
 
-    esc_bus_can.set_Id(C620_bace_id + 1);
-    esc_bus_can.set_Id(C620_bace_id + 2);
-    esc_bus_can.set_Id(C620_bace_id + 3);
-    esc_bus_can.set_Id(C620_bace_id + 4);
+    // esc_bus_can.set_Id(C620_bace_id + 1); /*未実装*/
+    // esc_bus_can.set_Id(C620_bace_id + 2); /*未実装*/
+    // esc_bus_can.set_Id(C620_bace_id + 3); /*未実装*/
+    // esc_bus_can.set_Id(C620_bace_id + 4); /*未実装*/
     if (esc_bus_can.init()) {
         HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, GPIO_PIN_SET);
     } /*CANの初期化*/

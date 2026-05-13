@@ -51,9 +51,6 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef* hfdcan, uint32_t RxFifo0ITs)
             ))
             return;
         main_fdcan_bus.update();
-    }
-    if ((RxFifo0ITs & FDCAN_IT_RX_FIFO0_FULL) == FDCAN_IT_RX_FIFO0_FULL) {
-    }
-    if ((RxFifo0ITs & FDCAN_IT_RX_FIFO0_MESSAGE_LOST) == FDCAN_IT_RX_FIFO0_MESSAGE_LOST) {
+        return;
     }
 }
