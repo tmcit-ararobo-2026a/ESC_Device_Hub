@@ -40,6 +40,15 @@ bool DriverSTM32FDCAN::receive(FDCANFrame& out_frame)
 }  // namespace drivers
 }  // namespace gn10_can
 
+maidui3_xcan::xcan main_silent_fdcan(
+    NULL,
+    maidui3_xcan::fifo::FIFO0,
+    maidui3_xcan::can_frame::FDCAN,
+    maidui3_xcan::id_filter_type::Non_mask_id,
+    0,
+    0
+);
+
 void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef* hfdcan, uint32_t RxFifo0ITs)
 {
     if ((RxFifo0ITs & FDCAN_IT_RX_FIFO0_NEW_MESSAGE) == FDCAN_IT_RX_FIFO0_NEW_MESSAGE) {

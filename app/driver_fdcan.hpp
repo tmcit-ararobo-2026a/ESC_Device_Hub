@@ -8,14 +8,7 @@
 
 #define maidui3_xcan maidui3_hal::Drivers::XCAN
 
-maidui3_xcan::xcan main_silent_fdcan(
-    NULL,
-    maidui3_xcan::fifo::FIFO0,
-    maidui3_xcan::can_frame::FDCAN,
-    maidui3_xcan::id_filter_type::Non_mask_id,
-    0,
-    0
-);
+extern maidui3_xcan::xcan main_silent_fdcan;
 
 namespace gn10_can {
 namespace drivers {
