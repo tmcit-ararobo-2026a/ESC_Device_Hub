@@ -4,25 +4,19 @@
 #include "../maidui3_hal/Drivers/FDCAN/mXCAN.hpp"
 #include "driver_fdcan.hpp"
 #include "gn10_can/core/fdcan_bus.hpp"
+#include "gn10_can/devices/esc_hub_config.hpp"
+#include "gn10_can/devices/esc_hub_server.hpp"
 
 gn10_can::drivers::DriverSTM32FDCAN main_bus_fdcan(&hfdcan1);
 gn10_can::FDCANBus main_fdcan_bus(main_bus_fdcan);
+gn10_can::devices::ESCHubServer main_bus(main_fdcan_bus, 0);
 
 #define maidui3_xcan       maidui3_hal::Drivers::XCAN
 #define C620_bace_id       0x200
-#define c620_send_id_Fside 0x200
+#define c620_send_id_Fside C620_bace_id
 #define c620_send_id_Lside 0x1FF
 
-maidui3_hal::Drivers::XCAN::xcan main_bus_can(
-    &hfdcan1,
-    maidui3_xcan::fifo::FIFO0,
-    maidui3_xcan::can_frame::Classic_CAN,
-    maidui3_xcan::id_filter_type::Non_mask_id,
-    0,
-    0
-);
-
-maidui3_hal::Drivers::XCAN::xcan esc_bus_can(
+maidui3_xcan::xcan esc_bus_can(
     &hfdcan2,
     maidui3_xcan::fifo::FIFO1,
     maidui3_xcan::can_frame::Classic_CAN,
@@ -61,7 +55,6 @@ void APP_Setup()
     esc_bus_can.set_Id(C620_bace_id + 4);
     if (esc_bus_can.init()) {
         HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, GPIO_PIN_SET);
-        while (1);
     } /*CANの初期化*/
 
     c620.id     = c620_send_id_Fside;
