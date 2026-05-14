@@ -52,14 +52,13 @@ maidui3_xcan::xcan main_silent_fdcan(
 void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef* hfdcan, uint32_t RxFifo0ITs)
 {
     if ((RxFifo0ITs & FDCAN_IT_RX_FIFO0_NEW_MESSAGE) == FDCAN_IT_RX_FIFO0_NEW_MESSAGE) {
-        if (HAL_FDCAN_GetRxMessage(
-                main_silent_fdcan.setup_type.hxcan_,
-                FDCAN_RX_FIFO0,
-                &main_bus_fdcan.gn10_FDCAN_RxHeader,
-                main_bus_fdcan.data
-            ))
-            return;
-        main_fdcan_bus.update();
+        if (hfdcan == main_silent_fdcan.setup_type.hxcan_) {
+            if (HAL_FDCAN_GetRxMessage(
+                    hfdcan, FDCAN_RX_FIFO0, &main_bus_fdcan.gn10_FDCAN_RxHeader, main_bus_fdcan.data
+                ))
+                return;
+            main_fdcan_bus.update();
+        }
         return;
     }
 }
