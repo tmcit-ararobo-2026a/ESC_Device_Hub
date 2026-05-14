@@ -1,0 +1,192 @@
+{
+	"inputs" : 
+	[
+		{
+			"path" : "CMakeLists.txt"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/Debug/CMakeFiles/4.3.0-rc3/CMakeSystem.cmake"
+		},
+		{
+			"path" : "cmake/gcc-arm-none-eabi.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/maidu/Downloads/cmake-4.3.0-rc3-windows-x86_64/cmake-4.3.0-rc3-windows-x86_64/share/cmake-4.3/Modules/CMakeSystemSpecificInitialize.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/Debug/CMakeFiles/4.3.0-rc3/CMakeCCompiler.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/Debug/CMakeFiles/4.3.0-rc3/CMakeCXXCompiler.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/maidu/Downloads/cmake-4.3.0-rc3-windows-x86_64/cmake-4.3.0-rc3-windows-x86_64/share/cmake-4.3/Modules/CMakeSystemSpecificInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/maidu/Downloads/cmake-4.3.0-rc3-windows-x86_64/cmake-4.3.0-rc3-windows-x86_64/share/cmake-4.3/Modules/CMakeGenericSystem.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/maidu/Downloads/cmake-4.3.0-rc3-windows-x86_64/cmake-4.3.0-rc3-windows-x86_64/share/cmake-4.3/Modules/CMakeInitializeConfigs.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/maidu/Downloads/cmake-4.3.0-rc3-windows-x86_64/cmake-4.3.0-rc3-windows-x86_64/share/cmake-4.3/Modules/Platform/Generic.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/maidu/Downloads/cmake-4.3.0-rc3-windows-x86_64/cmake-4.3.0-rc3-windows-x86_64/share/cmake-4.3/Modules/CMakeCInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/maidu/Downloads/cmake-4.3.0-rc3-windows-x86_64/cmake-4.3.0-rc3-windows-x86_64/share/cmake-4.3/Modules/CMakeLanguageInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/maidu/Downloads/cmake-4.3.0-rc3-windows-x86_64/cmake-4.3.0-rc3-windows-x86_64/share/cmake-4.3/Modules/Compiler/GNU-C.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/maidu/Downloads/cmake-4.3.0-rc3-windows-x86_64/cmake-4.3.0-rc3-windows-x86_64/share/cmake-4.3/Modules/Compiler/GNU.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/maidu/Downloads/cmake-4.3.0-rc3-windows-x86_64/cmake-4.3.0-rc3-windows-x86_64/share/cmake-4.3/Modules/Compiler/CMakeCommonCompilerMacros.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/maidu/Downloads/cmake-4.3.0-rc3-windows-x86_64/cmake-4.3.0-rc3-windows-x86_64/share/cmake-4.3/Modules/Platform/Generic.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/maidu/Downloads/cmake-4.3.0-rc3-windows-x86_64/cmake-4.3.0-rc3-windows-x86_64/share/cmake-4.3/Modules/CMakeCommonLanguageInclude.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/maidu/Downloads/cmake-4.3.0-rc3-windows-x86_64/cmake-4.3.0-rc3-windows-x86_64/share/cmake-4.3/Modules/Internal/CMakeCLinkerInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/maidu/Downloads/cmake-4.3.0-rc3-windows-x86_64/cmake-4.3.0-rc3-windows-x86_64/share/cmake-4.3/Modules/Internal/CMakeCommonLinkerInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/maidu/Downloads/cmake-4.3.0-rc3-windows-x86_64/cmake-4.3.0-rc3-windows-x86_64/share/cmake-4.3/Modules/CMakeCXXInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/maidu/Downloads/cmake-4.3.0-rc3-windows-x86_64/cmake-4.3.0-rc3-windows-x86_64/share/cmake-4.3/Modules/CMakeLanguageInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/maidu/Downloads/cmake-4.3.0-rc3-windows-x86_64/cmake-4.3.0-rc3-windows-x86_64/share/cmake-4.3/Modules/Compiler/GNU-CXX.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/maidu/Downloads/cmake-4.3.0-rc3-windows-x86_64/cmake-4.3.0-rc3-windows-x86_64/share/cmake-4.3/Modules/Compiler/GNU.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/maidu/Downloads/cmake-4.3.0-rc3-windows-x86_64/cmake-4.3.0-rc3-windows-x86_64/share/cmake-4.3/Modules/Platform/Generic.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/maidu/Downloads/cmake-4.3.0-rc3-windows-x86_64/cmake-4.3.0-rc3-windows-x86_64/share/cmake-4.3/Modules/CMakeCommonLanguageInclude.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/maidu/Downloads/cmake-4.3.0-rc3-windows-x86_64/cmake-4.3.0-rc3-windows-x86_64/share/cmake-4.3/Modules/Internal/CMakeCXXLinkerInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/maidu/Downloads/cmake-4.3.0-rc3-windows-x86_64/cmake-4.3.0-rc3-windows-x86_64/share/cmake-4.3/Modules/Internal/CMakeCommonLinkerInformation.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/Debug/CMakeFiles/4.3.0-rc3/CMakeASMCompiler.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/maidu/Downloads/cmake-4.3.0-rc3-windows-x86_64/cmake-4.3.0-rc3-windows-x86_64/share/cmake-4.3/Modules/CMakeASMInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/maidu/Downloads/cmake-4.3.0-rc3-windows-x86_64/cmake-4.3.0-rc3-windows-x86_64/share/cmake-4.3/Modules/Compiler/GNU-ASM.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/maidu/Downloads/cmake-4.3.0-rc3-windows-x86_64/cmake-4.3.0-rc3-windows-x86_64/share/cmake-4.3/Modules/Compiler/GNU.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/maidu/Downloads/cmake-4.3.0-rc3-windows-x86_64/cmake-4.3.0-rc3-windows-x86_64/share/cmake-4.3/Modules/Internal/CMakeASMLinkerInformation.cmake"
+		},
+		{
+			"path" : "cmake/stm32cubemx/CMakeLists.txt"
+		},
+		{
+			"path" : "app/CMakeLists.txt"
+		},
+		{
+			"path" : "gn10_can/CMakeLists.txt"
+		},
+		{
+			"path" : "maidui3_hal/CMakeLists.txt"
+		},
+		{
+			"path" : "maidui3_hal/Drivers/FDCAN/CMakeLists.txt"
+		},
+		{
+			"path" : "maidui3_hal/Drivers/QSPI/CMakeLists.txt"
+		},
+		{
+			"path" : "maidui3_hal/Drivers/USB/CMakeLists.txt"
+		},
+		{
+			"path" : "maidui3_hal/Middleware/FLASH/IS25LP064D-JLLE/CMakeLists.txt"
+		}
+	],
+	"kind" : "cmakeFiles",
+	"paths" : 
+	{
+		"build" : "C:/Project-Maidui3/2026_a/esc-control-hub/build/Debug",
+		"source" : "C:/Project-Maidui3/2026_a/esc-control-hub"
+	},
+	"version" : 
+	{
+		"major" : 1,
+		"minor" : 1
+	}
+}

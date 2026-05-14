@@ -1,0 +1,19 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"codemodelVersion" : 
+	{
+		"major" : 2,
+		"minor" : 10
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "maidui3_hal/Middleware/FLASH/IS25LP064D-JLLE",
+		"source" : "maidui3_hal/Middleware/FLASH/IS25LP064D-JLLE"
+	}
+}
