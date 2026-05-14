@@ -91,17 +91,17 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : Rol_SW2_Pin */
-  GPIO_InitStruct.Pin = Rol_SW2_Pin;
+  /*Configure GPIO pin : ID_4_SW_Pin */
+  GPIO_InitStruct.Pin = ID_4_SW_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(Rol_SW2_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(ID_4_SW_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : Rol_SW1_Pin Rol_SW4_Pin Rol_SW8_Pin */
-  GPIO_InitStruct.Pin = Rol_SW1_Pin|Rol_SW4_Pin|Rol_SW8_Pin;
+  /*Configure GPIO pin : ID_2_SW_Pin */
+  GPIO_InitStruct.Pin = ID_2_SW_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+  HAL_GPIO_Init(ID_2_SW_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : POWER_MONITOR_Pin */
   GPIO_InitStruct.Pin = POWER_MONITOR_Pin;
