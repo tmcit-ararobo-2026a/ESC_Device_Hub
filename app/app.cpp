@@ -76,12 +76,12 @@ void APP_Setup()
         HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, GPIO_PIN_SET);
     } /*全ESC停止*/
 
-    while (1) {
-        if (esc_bus_can.setup_type.callback_flag_.Id[0] && esc_bus_can.setup_type.callback_flag_.Id[1] &&
-            esc_bus_can.setup_type.callback_flag_.Id[2] && esc_bus_can.setup_type.callback_flag_.Id[3])
-            break;
-        HAL_Delay(10);
-    } /*全ESCから呼ばれるまで待つ*/
+    // while (1) {
+    //     if (esc_bus_can.setup_type.callback_flag_.Id[0] && esc_bus_can.setup_type.callback_flag_.Id[1] &&
+    //         esc_bus_can.setup_type.callback_flag_.Id[2] && esc_bus_can.setup_type.callback_flag_.Id[3])
+    //         break;
+    //     HAL_Delay(10);
+    // } /*全ESCから呼ばれるまで待つ*/
 
     esc_bus_can.setup_type.callback_flag_.Id[0] = 0;
     esc_bus_can.setup_type.callback_flag_.Id[1] = 0;

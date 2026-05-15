@@ -1,15 +1,15 @@
 {
 	"InstallScripts" : 
 	[
-		"C:/Project-Maidui3/2026_a/esc-control-hub/build/Debug/cmake_install.cmake",
-		"C:/Project-Maidui3/2026_a/esc-control-hub/build/Debug/cmake/stm32cubemx/cmake_install.cmake",
-		"C:/Project-Maidui3/2026_a/esc-control-hub/build/Debug/app/cmake_install.cmake",
-		"C:/Project-Maidui3/2026_a/esc-control-hub/build/Debug/gn10_can/cmake_install.cmake",
-		"C:/Project-Maidui3/2026_a/esc-control-hub/build/Debug/maidui3_hal/cmake_install.cmake",
-		"C:/Project-Maidui3/2026_a/esc-control-hub/build/Debug/maidui3_hal/Drivers/FDCAN/cmake_install.cmake",
-		"C:/Project-Maidui3/2026_a/esc-control-hub/build/Debug/maidui3_hal/Drivers/QSPI/cmake_install.cmake",
-		"C:/Project-Maidui3/2026_a/esc-control-hub/build/Debug/maidui3_hal/Drivers/USB/cmake_install.cmake",
-		"C:/Project-Maidui3/2026_a/esc-control-hub/build/Debug/maidui3_hal/Middleware/FLASH/IS25LP064D-JLLE/cmake_install.cmake"
+		"D:/document/2026_a/esc-control-hub/build/Debug/cmake_install.cmake",
+		"D:/document/2026_a/esc-control-hub/build/Debug/cmake/stm32cubemx/cmake_install.cmake",
+		"D:/document/2026_a/esc-control-hub/build/Debug/gn10_can/cmake_install.cmake",
+		"D:/document/2026_a/esc-control-hub/build/Debug/maidui3_hal/cmake_install.cmake",
+		"D:/document/2026_a/esc-control-hub/build/Debug/maidui3_hal/Drivers/FDCAN/cmake_install.cmake",
+		"D:/document/2026_a/esc-control-hub/build/Debug/maidui3_hal/Drivers/QSPI/cmake_install.cmake",
+		"D:/document/2026_a/esc-control-hub/build/Debug/maidui3_hal/Drivers/USB/cmake_install.cmake",
+		"D:/document/2026_a/esc-control-hub/build/Debug/maidui3_hal/Middleware/FLASH/IS25LP064D-JLLE/cmake_install.cmake",
+		"D:/document/2026_a/esc-control-hub/build/Debug/app/cmake_install.cmake"
 	],
 	"Parallel" : false
 }
