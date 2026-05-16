@@ -1,7 +1,7 @@
 # ninja log v7
-1357	4138	8005596688839161	CMakeFiles/esc-control-hub.dir/Core/Src/main.c.obj	771df3a76789879a
+8	1033	8005786035606647	CMakeFiles/esc-control-hub.dir/Core/Src/main.c.obj	771df3a76789879a
 1492	3589	8005596690195962	CMakeFiles/esc-control-hub.dir/Core/Src/gpio.c.obj	a7b66675781ed146
-1638	3733	8005596691659632	CMakeFiles/esc-control-hub.dir/Core/Src/fdcan.c.obj	5629fd816920a6a8
+108	1051	8005786036605856	CMakeFiles/esc-control-hub.dir/Core/Src/fdcan.c.obj	5629fd816920a6a8
 1798	3858	8005596693258865	CMakeFiles/esc-control-hub.dir/Core/Src/icache.c.obj	3e4aa507ee845ea3
 1930	4747	8005596694580411	CMakeFiles/esc-control-hub.dir/Core/Src/octospi.c.obj	66a784e3ebb8a5a5
 2069	4617	8005596695967655	CMakeFiles/esc-control-hub.dir/Core/Src/rtc.c.obj	aeacb4d7202f56ed
@@ -36,7 +36,7 @@
 8171	9984	8005596756987384	cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_pcd.c.obj	a44f61e5e3788686
 7895	9936	8005596754218536	cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_tim.c.obj	72adb26660a7ad6a
 8573	10119	8005596761008335	cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_ll_usb.c.obj	7da889ceecd0dc33
-1233	1793	8005597026556440	esc-control-hub.elf	cba720ff3914e56a
+1333	2140	8005800112534388	esc-control-hub.elf	1ee59d74eb2bd532
 6	1491	8005596675337173	gn10_can/CMakeFiles/gn10_can.dir/src/core/can_bus.cpp.obj	facccef671e0e1d9
 67	1638	8005596675938846	gn10_can/CMakeFiles/gn10_can.dir/src/core/fdcan_bus.cpp.obj	dc6e7241df19603a
 136	1798	8005596676637746	gn10_can/CMakeFiles/gn10_can.dir/src/devices/esc_hub_client.cpp.obj	78915a90a35e9543
@@ -51,20 +51,14 @@
 1065	3034	8005596685929082	gn10_can/CMakeFiles/gn10_can.dir/src/devices/power_manager_client.cpp.obj	7c172ae3cce50930
 1216	3206	8005596687426061	gn10_can/CMakeFiles/gn10_can.dir/src/devices/power_manager_server.cpp.obj	58888367e6a8f5c6
 3998	5457	8005596715247575	CMakeFiles/esc-control-hub.dir/maidui3_hal/Middleware/FLASH/IS25LP064D-JLLE/IS25LP064D-JLLE.cpp.obj	e36e9d946df123d1
-3206	5747	8005596707328450	CMakeFiles/esc-control-hub.dir/maidui3_hal/Drivers/FDCAN/mXCAN_manager.cpp.obj	cd787b7d9e83d7a7
-3589	6066	8005596711166979	CMakeFiles/esc-control-hub.dir/maidui3_hal/Drivers/FDCAN/mXCAN.cpp.obj	602b44b8aa40e25e
+10	1230	8005800099309878	CMakeFiles/esc-control-hub.dir/maidui3_hal/Drivers/FDCAN/mXCAN_manager.cpp.obj	cd787b7d9e83d7a7
+92	1224	8005800100122947	CMakeFiles/esc-control-hub.dir/maidui3_hal/Drivers/FDCAN/mXCAN.cpp.obj	602b44b8aa40e25e
 3733	6367	8005596712609157	CMakeFiles/esc-control-hub.dir/maidui3_hal/Drivers/QSPI/mQSPI_manager.cpp.obj	b89a46095fc255b9
 3859	6534	8005596713865218	CMakeFiles/esc-control-hub.dir/maidui3_hal/Drivers/USB/mUSB.cpp.obj	6c1c7c659e38b22e
 4264	7598	8005596717917750	CMakeFiles/esc-control-hub.dir/app/driver_fdcan.cpp.obj	d02e9a5b2a8d6218
-9	1233	8005597014315644	CMakeFiles/esc-control-hub.dir/app/app.cpp.obj	a53decc0ee726e11
-8707	9608	8005596762344510	gn10_can/libgn10_can.a	11aa57c7e0261564
-8	1033	8005786035606647	CMakeFiles/esc-control-hub.dir/Core/Src/main.c.obj	771df3a76789879a
-108	1051	8005786036605856	CMakeFiles/esc-control-hub.dir/Core/Src/fdcan.c.obj	5629fd816920a6a8
-180	1439	8005786037316662	CMakeFiles/esc-control-hub.dir/maidui3_hal/Drivers/FDCAN/mXCAN_manager.cpp.obj	cd787b7d9e83d7a7
-256	1471	8005786038088301	CMakeFiles/esc-control-hub.dir/maidui3_hal/Drivers/FDCAN/mXCAN.cpp.obj	602b44b8aa40e25e
-339	1538	8005786038909504	CMakeFiles/esc-control-hub.dir/app/app.cpp.obj	a53decc0ee726e11
-1538	2241	8005786050910396	esc-control-hub.elf	1ee59d74eb2bd532
-92	1224	8005800100122947	CMakeFiles/esc-control-hub.dir/maidui3_hal/Drivers/FDCAN/mXCAN.cpp.obj	602b44b8aa40e25e
-10	1230	8005800099309878	CMakeFiles/esc-control-hub.dir/maidui3_hal/Drivers/FDCAN/mXCAN_manager.cpp.obj	cd787b7d9e83d7a7
 162	1333	8005800100821500	CMakeFiles/esc-control-hub.dir/app/app.cpp.obj	a53decc0ee726e11
-1333	2140	8005800112534388	esc-control-hub.elf	1ee59d74eb2bd532
+8707	9608	8005596762344510	gn10_can/libgn10_can.a	11aa57c7e0261564
+10	1322	8006254651559816	CMakeFiles/esc-control-hub.dir/maidui3_hal/Drivers/FDCAN/mXCAN_manager.cpp.obj	cd787b7d9e83d7a7
+78	1356	8006254652244342	CMakeFiles/esc-control-hub.dir/maidui3_hal/Drivers/FDCAN/mXCAN.cpp.obj	602b44b8aa40e25e
+151	1467	8006254652974815	CMakeFiles/esc-control-hub.dir/app/app.cpp.obj	a53decc0ee726e11
+1467	2256	8006254666133442	esc-control-hub.elf	1ee59d74eb2bd532
