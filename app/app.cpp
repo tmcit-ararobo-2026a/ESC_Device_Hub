@@ -2,14 +2,14 @@
 #include "app.h"
 
 #include "../maidui3_hal/Drivers/FDCAN/mXCAN.hpp"
-#include "driver_fdcan.hpp"
-#include "gn10_can/core/fdcan_bus.hpp"
-#include "gn10_can/devices/esc_hub_config.hpp"
-#include "gn10_can/devices/esc_hub_server.hpp"
+// #include "driver_fdcan.hpp"
+// #include "gn10_can/core/fdcan_bus.hpp"
+// #include "gn10_can/devices/esc_hub_config.hpp"
+// #include "gn10_can/devices/esc_hub_server.hpp"
 
-gn10_can::drivers::DriverSTM32FDCAN main_bus_fdcan(&hfdcan1);
-gn10_can::FDCANBus main_fdcan_bus(main_bus_fdcan);
-gn10_can::devices::ESCHubServer main_bus(main_fdcan_bus, 0);
+// gn10_can::drivers::DriverSTM32FDCAN main_bus_fdcan(&hfdcan1);
+// gn10_can::FDCANBus main_fdcan_bus(main_bus_fdcan);
+// gn10_can::devices::ESCHubServer main_bus(main_fdcan_bus, 0);
 
 #define maidui3_xcan       maidui3_hal::Drivers::XCAN
 #define C620_bace_id       0x200
