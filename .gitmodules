@@ -1,6 +1,3 @@
 [submodule "gn10_can"]
 	path = gn10_can
 	url = https://github.com/ararobo/gn10-can
-[submodule "maidui3_hal"]
-	path = maidui3_hal
-	url = https://github.com/Maidui3/maidui3_hal
