@@ -8,7 +8,7 @@ set(APP_Include_Dirs
 
 set(APP_App_Dirs
     ${CMAKE_CURRENT_SOURCE_DIR}/app.cpp
-    #${CMAKE_CURRENT_SOURCE_DIR}/driver_fdcan.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/driver_fdcan.cpp
 )
 
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE ${APP_App_Dirs})

@@ -15,9 +15,9 @@ bool DriverSTM32FDCAN::init()
 
 bool DriverSTM32FDCAN::send(const FDCANFrame& frame)
 {
-    data_frame.id     = frame.id;
-    data_frame.len    = frame.dlc;
-    data_frame.data_p = const_cast<uint8_t*>(frame.data.data());
+    data_frame.id_     = frame.id;
+    data_frame.len_    = frame.dlc;
+    data_frame.data_p_ = const_cast<uint8_t*>(frame.data.data());
 
     if (main_silent_fdcan.SendMessage(&data_frame)) return 1;
 

@@ -2,14 +2,14 @@
 #include "app.h"
 
 #include "../maidui3_hal/Drivers/FDCAN/mXCAN.hpp"
-// #include "driver_fdcan.hpp"
-// #include "gn10_can/core/fdcan_bus.hpp"
-// #include "gn10_can/devices/esc_hub_config.hpp"
-// #include "gn10_can/devices/esc_hub_server.hpp"
+#include "driver_fdcan.hpp"
+#include "gn10_can/core/fdcan_bus.hpp"
+#include "gn10_can/devices/esc_hub_config.hpp"
+#include "gn10_can/devices/esc_hub_server.hpp"
 
-// gn10_can::drivers::DriverSTM32FDCAN main_bus_fdcan(&hfdcan1);
-// gn10_can::FDCANBus main_fdcan_bus(main_bus_fdcan);
-// gn10_can::devices::ESCHubServer main_bus(main_fdcan_bus, 0);
+gn10_can::drivers::DriverSTM32FDCAN main_bus_fdcan(&hfdcan1);
+gn10_can::FDCANBus main_fdcan_bus(main_bus_fdcan);
+gn10_can::devices::ESCHubServer main_bus(main_fdcan_bus, 0);
 
 #define maidui3_xcan       maidui3_hal::Drivers::XCAN
 #define C620_bace_id       0x200
@@ -57,9 +57,9 @@ void APP_Setup()
         HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, GPIO_PIN_SET);
     } /*CANの初期化*/
 
-    c620.id     = c620_send_id_Fside;
-    c620.len    = 8;
-    c620.data_p = c620_send.data;
+    c620.id_     = c620_send_id_Fside;
+    c620.len_    = 8;
+    c620.data_p_ = c620_send.data;
 
     /*CAN,SPI,USBの初期化*/
 
@@ -83,10 +83,7 @@ void APP_Setup()
     //     HAL_Delay(10);
     // } /*全ESCから呼ばれるまで待つ*/
 
-    esc_bus_can.setup_type.callback_flag_.Id[0] = 0;
-    esc_bus_can.setup_type.callback_flag_.Id[1] = 0;
-    esc_bus_can.setup_type.callback_flag_.Id[2] = 0;
-    esc_bus_can.setup_type.callback_flag_.Id[3] = 0;
+    esc_bus_can.setup_type.callback_flag_.Id = 0;
 
     /*キャリブレーション終了*/
     HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, GPIO_PIN_SET);
