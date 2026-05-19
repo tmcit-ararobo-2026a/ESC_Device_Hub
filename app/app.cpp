@@ -11,10 +11,8 @@ gn10_can::drivers::DriverSTM32FDCAN main_bus_fdcan(&hfdcan1);
 gn10_can::FDCANBus main_fdcan_bus(main_bus_fdcan);
 gn10_can::devices::ESCHubServer main_bus(main_fdcan_bus, 0);
 
-#define maidui3_xcan       maidui3_hal::Drivers::XCAN
-#define C620_bace_id       0x200
-#define c620_send_id_Fside C620_bace_id
-#define c620_send_id_Lside 0x1FF
+#define maidui3_xcan maidui3_hal::Drivers::XCAN
+#define C620_bace_id 0x200
 
 maidui3_xcan::xcan esc_bus_can(
     &hfdcan2,
@@ -45,19 +43,16 @@ union c620_receive_data_frame {
 c620_send_data_frame c620_send;
 c620_receive_data_frame c620_receive[4];
 
-void APP_Setup()
+void setup()
 {
     HAL_Delay(10);
+    HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, GPIO_PIN_SET);
 
-    // esc_bus_can.set_Id(C620_bace_id + 1); /*未実装*/
-    // esc_bus_can.set_Id(C620_bace_id + 2); /*未実装*/
-    // esc_bus_can.set_Id(C620_bace_id + 3); /*未実装*/
-    // esc_bus_can.set_Id(C620_bace_id + 4); /*未実装*/
     if (esc_bus_can.init()) {
         HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, GPIO_PIN_SET);
     } /*CANの初期化*/
 
-    c620.id_     = c620_send_id_Fside;
+    c620.id_     = C620_bace_id;
     c620.len_    = 8;
     c620.data_p_ = c620_send.data;
 
@@ -76,17 +71,16 @@ void APP_Setup()
         HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, GPIO_PIN_SET);
     } /*全ESC停止*/
 
-    // while (1) {
-    //     if (esc_bus_can.setup_type.callback_flag_.Id[0] && esc_bus_can.setup_type.callback_flag_.Id[1] &&
-    //         esc_bus_can.setup_type.callback_flag_.Id[2] && esc_bus_can.setup_type.callback_flag_.Id[3])
-    //         break;
-    //     HAL_Delay(10);
-    // } /*全ESCから呼ばれるまで待つ*/
-
     esc_bus_can.setup_type.callback_flag_.Id = 0;
 
+    while (1) {
+    };
+
     /*キャリブレーション終了*/
-    HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, GPIO_PIN_RESET);
+
+    /*ループ開始*/
+    HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, GPIO_PIN_SET);
 }
 
-void APP_Loop() {}
+void loop() {}
