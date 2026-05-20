@@ -73,9 +73,6 @@ void setup()
 
     esc_bus_can.setup_type.callback_flag_.Id = 0;
 
-    while (1) {
-    };
-
     /*キャリブレーション終了*/
     HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, GPIO_PIN_RESET);
 
