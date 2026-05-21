@@ -23,7 +23,8 @@ maidui3_xcan::xcan esc_bus_can(
     0
 );
 
-maidui3_xcan::hxcan_frame c620;
+maidui3_xcan::hxcan_frame c620_s;
+maidui3_xcan::hxcan_frame c620_r[4];
 
 union c620_send_data_frame {
     uint8_t data[8];
@@ -60,19 +61,21 @@ void setup()
     esc_bus_can.set_Id(C620_bace_id + 3);
     esc_bus_can.set_Id(C620_bace_id + 4);
 
+    esc_bus_can.set_Id_mask(0x7FF);
+
     if (esc_bus_can.init()) {
         HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, GPIO_PIN_SET);
     } /*CANの初期化*/
 
-    c620.id_     = C620_bace_id;
-    c620.len_    = 0x08;
-    c620.data_p_ = c620_send.data;
+    c620_s.id_     = C620_bace_id;
+    c620_s.len_    = 0x08;
+    c620_s.data_p_ = c620_send.data;
 
-    esc_bus_can.setup_type.callback_flag_.Id = 0;
-    esc_bus_can.buffer.nvic_.Id              = 0;
-    esc_bus_can.buffer.nvic_.Rx_Callback     = 0;
-    esc_bus_can.buffer.nvic_.Rx_Timeout      = 0;
-    esc_bus_can.buffer.nvic_.Tx_Callback     = 0;
+    for (uint8_t i = 0; i < 4; i++) {
+        c620_r[i].id_     = 0x00;
+        c620_r[i].len_    = 0x00;
+        c620_r[i].data_p_ = c620_receive[i].data;
+    }
 
     /*CAN,SPI,USBの初期化*/
 
@@ -81,7 +84,7 @@ void setup()
     c620_send.value[2] = 0x00;
     c620_send.value[3] = 0x00;
 
-    if (esc_bus_can.SendMessage(&c620)) {
+    if (esc_bus_can.SendMessage(&c620_s)) {
         HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, GPIO_PIN_SET);
     } /*全ESC停止*/
     HAL_Delay(10);
@@ -114,6 +117,21 @@ void setup()
 void loop()
 {
     if (esc_bus_can.buffer.nvic_.Rx_Callback) {
+        if (esc_bus_can.buffer.nvic_.Id == 0x02) {
+            HAL_GPIO_TogglePin(LED_4_GPIO_Port, LED_4_Pin);
+            esc_bus_can.buffer.nvic_.Id = 0x00;
+        }
         esc_bus_can.buffer.nvic_.Rx_Callback = 0;
     }
+    c620_s.id_ = C620_bace_id + 2;
+
+    if (esc_bus_can.SendMessage(&c620_s)) {
+        HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, GPIO_PIN_SET);
+    }
+    HAL_Delay(1000);
 }
+
+/**
+ *
+ *
+ */
