@@ -1,6 +1,9 @@
 
 #include "app.h"
 
+#include "math.h"
+//
+
 #include "../maidui3_hal/Drivers/FDCAN/mXCAN.hpp"
 #include "driver_fdcan.hpp"
 #include "gn10_can/core/fdcan_bus.hpp"
@@ -27,12 +30,12 @@ maidui3_xcan::hxcan_frame c620_s;
 maidui3_xcan::hxcan_frame c620_r[4];
 
 union c620_send_data_frame {
-    uint8_t data[8];
+    uint8_t data[8] = {0};
     int16_t value[4];  // -16384 ~ 16384
 };
 
 union c620_receive_data_frame {
-    uint8_t data[8];
+    uint8_t data[8] = {0};
     struct {
         uint16_t rote_angle; /*角度*/
         uint16_t rpm;        /*速度*/
@@ -45,8 +48,8 @@ c620_send_data_frame c620_send;
 c620_receive_data_frame c620_receive[4];
 
 struct c620_speed_box {
-    float rad_p_s;
-    uint16_t c620_value;
+    uint16_t c620_value = {0};
+    float rad_p_s       = {0};
 };
 
 c620_speed_box c620_speed_table[4][164];
@@ -96,16 +99,49 @@ void setup()
      * キャリブレーション中の増加量は値で100
      */
 
-    // for (uint16_t i = 0; i < 164; i++) {
-    //     c620_send.value[0] = i * 100;
-    //     c620_send.value[1] = i * 100;
-    //     c620_send.value[2] = i * 100;
-    //     c620_send.value[3] = i * 100;
-    //     esc_bus_can.SendMessage(&c620);
-    //     while (!esc_bus_can.buffer.nvic_.Rx_Callback) {
-    //         esc_bus_can.GetMessage(&c620);
-    //     }
-    // }
+    for (uint16_t i = 1; i < 163; i++) {
+        c620_send.value[0] = i * 100;
+        c620_send.value[1] = i * 100;
+        c620_send.value[2] = i * 100;
+        c620_send.value[3] = i * 100;
+        esc_bus_can.SendMessage(&c620_s);
+        esc_bus_can.wait_tx_event_fin();
+        while (1) {
+            if (esc_bus_can.buffer.nvic_.Rx_Callback) {
+                if ((esc_bus_can.buffer.nvic_.Id & 0x01) == 0x01) {
+                    c620_speed_table[0][i].c620_value = c620_send.value[0];
+                    esc_bus_can.GetMessage(&c620_r[0], 0);
+                    // if(c620_r->len_ == 0x08) //____
+                    c620_speed_table[0][i].rad_p_s = (float)c620_receive[0].value.rpm / 60.0f * (float)M_PI * 2.0f;
+                }
+
+                if ((esc_bus_can.buffer.nvic_.Id & 0x02) == 0x02) {
+                    c620_speed_table[1][i].c620_value = c620_send.value[1];
+                    esc_bus_can.GetMessage(&c620_r[1], 1);
+                    // if(c620_r->len_ == 0x08) //____
+                    c620_speed_table[1][i].rad_p_s = (float)c620_receive[1].value.rpm / 60.0f * (float)M_PI * 2.0f;
+                }
+
+                if ((esc_bus_can.buffer.nvic_.Id & 0x04) == 0x04) {
+                    c620_speed_table[2][i].c620_value = c620_send.value[2];
+                    esc_bus_can.GetMessage(&c620_r[2], 2);
+                    // if(c620_r->len_ == 0x08) //____
+                    c620_speed_table[2][i].rad_p_s = (float)c620_receive[2].value.rpm / 60.0f * (float)M_PI * 2.0f;
+                }
+
+                if ((esc_bus_can.buffer.nvic_.Id & 0x08) == 0x08) {
+                    c620_speed_table[3][i].c620_value = c620_send.value[3];
+                    esc_bus_can.GetMessage(&c620_r[3], 3);
+                    // if(c620_r->len_ == 0x08) //____
+                    c620_speed_table[3][i].rad_p_s = (float)c620_receive[3].value.rpm / 60.0f * (float)M_PI * 2.0f;
+                }
+
+                if (esc_bus_can.buffer.nvic_.Id == 0x0F) {
+                    esc_bus_can.buffer.nvic_.Id = 0;
+                }
+            }
+        };
+    }
 
     /*キャリブレーション終了*/
     HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, GPIO_PIN_RESET);
@@ -130,8 +166,3 @@ void loop()
     }
     HAL_Delay(1000);
 }
-
-/**
- *
- *
- */
