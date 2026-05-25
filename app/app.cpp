@@ -47,14 +47,14 @@ struct c620_speed_box {
     float rad_p_s       = {0};
 };
 
-int16_t c620_current_current(int16_t current)
+int16_t c620_current_to_current(int16_t current)
 {
     return (int16_t)((current & 0xFF) << 8) | ((current & 0xFF00) >> 8);
 }
 
 int16_t c620_rad_to_current(int16_t rad)
 {
-    return c620_current_current(0);
+    return 0;
 }
 
 // CAN
@@ -63,6 +63,9 @@ maidui3_hal::Control::PID::Proportional_Integral_Derivative PID[4];
 
 // PID
 
+float target_value[4];
+
+// public value
 void Error();
 
 void setup()
@@ -149,28 +152,48 @@ void setup()
 
 void loop()
 {
+    if (main_silent_fdcan.buffer.nvic_.Rx_Callback) {
+        main_bus.get_angular_velocities(target_value);
+    }
+
     if (esc_bus_can.buffer.nvic_.Rx_Callback) {
         if ((esc_bus_can.buffer.nvic_.Id & 0x01) == 0x01) {
             esc_bus_can.GetMessage(&c620_r[0]);
-            c620_send.value[0] = c620_rad_to_current(PID[0].PID(c620_receive[0].value.rpm) * 2 * M_PI);
+
+            c620_send.value[0] = c620_current_to_current(
+                c620_rad_to_current(PID[0].PID(target_value[0] - (c620_receive[0].value.rpm * 2 * M_PI)))
+            );
+
             esc_bus_can.SendMessage(&c620_s);
         }
 
         if ((esc_bus_can.buffer.nvic_.Id & 0x02) == 0x02) {
             esc_bus_can.GetMessage(&c620_r[1]);
-            c620_send.value[1] = c620_rad_to_current(PID[1].PID(c620_receive[1].value.rpm) * 2 * M_PI);
+
+            c620_send.value[1] = c620_current_to_current(
+                c620_rad_to_current(PID[1].PID(target_value[0] - (c620_receive[1].value.rpm * 2 * M_PI)))
+            );
+
             esc_bus_can.SendMessage(&c620_s);
         }
 
         if ((esc_bus_can.buffer.nvic_.Id & 0x04) == 0x04) {
             esc_bus_can.GetMessage(&c620_r[2]);
-            c620_send.value[2] = c620_rad_to_current(PID[2].PID(c620_receive[2].value.rpm) * 2 * M_PI);
+
+            c620_send.value[2] = c620_current_to_current(
+                c620_rad_to_current(PID[2].PID(target_value[0] - (c620_receive[2].value.rpm * 2 * M_PI)))
+            );
+
             esc_bus_can.SendMessage(&c620_s);
         }
 
         if ((esc_bus_can.buffer.nvic_.Id & 0x08) == 0x08) {
             esc_bus_can.GetMessage(&c620_r[3]);
-            c620_send.value[3] = c620_rad_to_current(PID[3].PID(c620_receive[3].value.rpm) * 2 * M_PI);
+
+            c620_send.value[3] = c620_current_to_current(
+                c620_rad_to_current(PID[3].PID(target_value[0] - (c620_receive[3].value.rpm * 2 * M_PI)))
+            );
+
             esc_bus_can.SendMessage(&c620_s);
         }
     }
