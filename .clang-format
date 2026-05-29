@@ -1,7 +1,7 @@
 # Googleをベースにカスタムする
 BasedOnStyle: Google
 # 過度な改行はしない
-ColumnLimit: 120
+ColumnLimit: 140
 # インデントはROS2標準に合わせ横幅節約
 IndentWidth: 4
 # クラスのアクセスは明確に

@@ -6,7 +6,7 @@ namespace drivers {
 
 bool DriverSTM32FDCAN::init()
 {
-    if (main_silent_fdcan.init()) {
+    if (main_fdcan.init()) {
         return 1;
     }
 
@@ -19,7 +19,7 @@ bool DriverSTM32FDCAN::send(const FDCANFrame& frame)
     data_frame.len_    = frame.dlc;
     data_frame.data_p_ = const_cast<uint8_t*>(frame.data.data());
 
-    if (main_silent_fdcan.SendMessage(&data_frame)) return 1;
+    if (main_fdcan.SendMessage(&data_frame)) return 1;
 
     return 0;
 }
@@ -40,12 +40,12 @@ bool DriverSTM32FDCAN::receive(FDCANFrame& out_frame)
 }  // namespace drivers
 }  // namespace gn10_can
 
-maidui3_xcan::xcan main_silent_fdcan(NULL, maidui3_xcan::fifo::FIFO0, maidui3_xcan::id_filter_type::Non_mask_id, 0, 0);
+maidui3_xcan::xcan main_fdcan(NULL, maidui3_xcan::fifo::FIFO0, maidui3_xcan::id_filter_type::Non_mask_id, 0, 0);
 
 void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef* hfdcan, uint32_t RxFifo0ITs)
 {
     if ((RxFifo0ITs & FDCAN_IT_RX_FIFO0_NEW_MESSAGE) == FDCAN_IT_RX_FIFO0_NEW_MESSAGE) {
-        if (hfdcan == main_silent_fdcan.setup_type.hxcan_) {
+        if (hfdcan == main_fdcan.setup_type.hxcan_) {
             if (HAL_FDCAN_GetRxMessage(
                     hfdcan, FDCAN_RX_FIFO0, &main_bus_fdcan.gn10_FDCAN_RxHeader, main_bus_fdcan.data
                 ))

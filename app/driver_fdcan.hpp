@@ -8,7 +8,7 @@
 
 #define maidui3_xcan maidui3_hal::Drivers::XCAN
 
-extern maidui3_xcan::xcan main_silent_fdcan;
+extern maidui3_xcan::xcan main_fdcan;
 
 namespace gn10_can {
 namespace drivers {
@@ -23,7 +23,7 @@ public:
 public:
     DriverSTM32FDCAN(FDCAN_HandleTypeDef* hfdcan)
     {
-        main_silent_fdcan.set_FDCAN_HandleTypedef(hfdcan);
+        main_fdcan.set_FDCAN_HandleTypedef(hfdcan);
     }
 
     bool init();
