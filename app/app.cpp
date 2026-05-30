@@ -155,15 +155,15 @@ void loop()
         }
     }
 
-#define FF_Active_rad          2
-#define set_FF_Active_Position 2 * M_PI* FF_Active_rad
+#define FF_Active_rad          1.0f
+#define set_FF_Active_Position 2.0f * M_PI* FF_Active_rad
 
     if (esc_bus.buffer.nvic_.Rx_Callback) {
         if (esc_bus.buffer.nvic_.Id[0]) {
             esc_bus.GetMessage(&c620_r[0]);
             c620_send.value[0] = 0;
 
-            if ((target_value[0] - (c620_receive[0].value.rpm * 2 * M_PI)) >= set_FF_Active_Position) {
+            if (abs(target_value[0] - (c620_receive[0].value.rpm * 2 * M_PI)) >= set_FF_Active_Position) {
                 c620_send.value[0] += c620_current_to_current(hub_config.ff * (target_value[0] - (c620_receive[0].value.rpm * 2 * M_PI)));
             }
 
@@ -176,7 +176,7 @@ void loop()
             esc_bus.GetMessage(&c620_r[1]);
             c620_send.value[1] = 0;
 
-            if ((target_value[1] - (c620_receive[1].value.rpm * 2 * M_PI)) >= set_FF_Active_Position) {
+            if (abs(target_value[1] - (c620_receive[1].value.rpm * 2 * M_PI)) >= set_FF_Active_Position) {
                 c620_send.value[1] += c620_current_to_current(hub_config.ff * (target_value[1] - (c620_receive[1].value.rpm * 2 * M_PI)));
             }
 
@@ -189,7 +189,7 @@ void loop()
             esc_bus.GetMessage(&c620_r[2]);
             c620_send.value[2] = 0;
 
-            if ((target_value[2] - (c620_receive[2].value.rpm * 2 * M_PI)) >= set_FF_Active_Position) {
+            if (abs(target_value[2] - (c620_receive[2].value.rpm * 2 * M_PI)) >= set_FF_Active_Position) {
                 c620_send.value[2] += c620_current_to_current(hub_config.ff * (target_value[2] - (c620_receive[2].value.rpm * 2 * M_PI)));
             }
 
@@ -202,7 +202,7 @@ void loop()
             esc_bus.GetMessage(&c620_r[3]);
             c620_send.value[3] = 0;
 
-            if ((target_value[3] - (c620_receive[3].value.rpm * 2 * M_PI)) >= set_FF_Active_Position) {
+            if (abs(target_value[3] - (c620_receive[3].value.rpm * 2 * M_PI)) >= set_FF_Active_Position) {
                 c620_send.value[3] += c620_current_to_current(hub_config.ff * (target_value[3] - (c620_receive[3].value.rpm * 2 * M_PI)));
             }
 
