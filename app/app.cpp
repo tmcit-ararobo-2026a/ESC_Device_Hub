@@ -20,7 +20,7 @@ gn10_can::devices::ESCHubConfig hub_config;
 #define maidui3_xcan maidui3_hal::Drivers::XCAN
 #define C620_bace_id 0x200
 
-maidui3_xcan::xcan esc_bus(&hfdcan2, maidui3_xcan::fifo::FIFO1, maidui3_xcan::id_filter_type::mask_four_id, 0, 1);
+maidui3_xcan::xcan esc_bus(&hfdcan2, maidui3_xcan::fifo::FIFO1, maidui3_xcan::id_filter_type::mask_four_id, 0, 0);
 maidui3_xcan::hxcan_frame c620_s;
 maidui3_xcan::hxcan_frame c620_r[4];
 
@@ -61,6 +61,8 @@ maidui3_hal::Control::PID::Proportional_Integral_Derivative PID[4];
 float target_value[4];
 
 // public value
+bool timer_1kHz;
+
 void Error();
 
 void setup()
@@ -85,10 +87,11 @@ void setup()
 
     /*領域の定義*/
 
-    esc_bus.set_Id(C620_bace_id + 1); /*受信したいidを定義する　最大４つ*/
-    esc_bus.set_Id(C620_bace_id + 2); /*受信したいidを定義する　最大４つ*/
-    esc_bus.set_Id(C620_bace_id + 3); /*受信したいidを定義する　最大４つ*/
-    esc_bus.set_Id(C620_bace_id + 4); /*受信したいidを定義する　最大４つ*/
+    esc_bus.set_Id(C620_bace_id + 1); /*受信したいidを定義する*/  // Index 0
+    esc_bus.set_Id(C620_bace_id + 2); /*受信したいidを定義する*/  // Index 1
+    esc_bus.set_Id(C620_bace_id + 3); /*受信したいidを定義する*/  // Index 2
+    esc_bus.set_Id(C620_bace_id + 4); /*受信したいidを定義する*/  // Index 3
+    /*idは最大4つまで*/
 
     esc_bus.set_Id_mask(0x7FF); /*idに対してどのようなマスクをかけるのか*/
     /*実際に使われるidは、set_Id & set_Id_mask の論理値で出る*/
@@ -120,6 +123,11 @@ void setup()
     PID[1].set_control_cycle(1000); /*PIDの制御周期 Hz*/
     PID[2].set_control_cycle(1000); /*PIDの制御周期 Hz*/
     PID[3].set_control_cycle(1000); /*PIDの制御周期 Hz*/
+
+    PID[0].reset_deviation(); /*PID内部の積分を初期化*/
+    PID[1].reset_deviation(); /*PID内部の積分を初期化*/
+    PID[2].reset_deviation(); /*PID内部の積分を初期化*/
+    PID[3].reset_deviation(); /*PID内部の積分を初期化*/
 
     HAL_TIM_Base_Start_IT(&htim6); /*1kHzの周期*/
 
@@ -165,9 +173,9 @@ void loop()
 #define FF_Active_rad          1.0f
 #define set_FF_Active_Position 2.0f * M_PI* FF_Active_rad
 
-    if (esc_bus.buffer.nvic_.Rx_Callback) {
-        if (esc_bus.buffer.nvic_.Id[0]) {
-            esc_bus.GetMessage(&c620_r[0]);
+    if (esc_bus.buffer.nvic_.Rx_Callback) {    /*バス全体の割り込みフラグ*/
+        if (esc_bus.buffer.nvic_.Id[0]) {      /*Index 0 の割り込みフラグ*/
+            esc_bus.GetMessage(&c620_r[0], 0); /*Index 0 の受信*/
             // c620_send.value[0] = 0;
 
             if (abs(target_value[0] - (c620_receive[0].value.rpm * 2 * M_PI)) >= set_FF_Active_Position) {
@@ -177,10 +185,12 @@ void loop()
             c620_send.value[0] += c620_current_to_current(PID[0].PID(c620_receive[0].value.rpm * 2 * M_PI));
 
             esc_bus.SendMessage(&c620_s);
+
+            esc_bus.buffer.nvic_.Id[0] = 0;
         }
 
         if (esc_bus.buffer.nvic_.Id[1]) {
-            esc_bus.GetMessage(&c620_r[1]);
+            esc_bus.GetMessage(&c620_r[1], 1);
             // c620_send.value[1] = 0;
 
             if (abs(target_value[1] - (c620_receive[1].value.rpm * 2 * M_PI)) >= set_FF_Active_Position) {
@@ -190,10 +200,12 @@ void loop()
             c620_send.value[1] += c620_current_to_current(PID[1].PID(c620_receive[1].value.rpm * 2 * M_PI));
 
             esc_bus.SendMessage(&c620_s);
+
+            esc_bus.buffer.nvic_.Id[1] = 0;
         }
 
         if (esc_bus.buffer.nvic_.Id[2]) {
-            esc_bus.GetMessage(&c620_r[2]);
+            esc_bus.GetMessage(&c620_r[2], 2);
             // c620_send.value[2] = 0;
 
             if (abs(target_value[2] - (c620_receive[2].value.rpm * 2 * M_PI)) >= set_FF_Active_Position) {
@@ -203,10 +215,12 @@ void loop()
             c620_send.value[2] += c620_current_to_current(PID[2].PID(c620_receive[2].value.rpm * 2 * M_PI));
 
             esc_bus.SendMessage(&c620_s);
+
+            esc_bus.buffer.nvic_.Id[2] = 0;
         }
 
         if (esc_bus.buffer.nvic_.Id[3]) {
-            esc_bus.GetMessage(&c620_r[3]);
+            esc_bus.GetMessage(&c620_r[3], 3);
             // c620_send.value[3] = 0;
 
             if (abs(target_value[3] - (c620_receive[3].value.rpm * 2 * M_PI)) >= set_FF_Active_Position) {
@@ -216,14 +230,23 @@ void loop()
             c620_send.value[3] += c620_current_to_current(PID[3].PID(c620_receive[3].value.rpm * 2 * M_PI));
 
             esc_bus.SendMessage(&c620_s);
+
+            esc_bus.buffer.nvic_.Id[3] = 0;
         }
+
+        esc_bus.buffer.nvic_.Rx_Callback = 0;
+    }
+
+    if (timer_1kHz) {
+        esc_bus.SendMessage_for_timer_loop(&c620_s);
+        timer_1kHz = 0;
     }
 }
 
 extern "C" void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
 {
     if (htim == &htim6) {
-        esc_bus.SendMessage_for_timer_loop(&c620_s);
+        timer_1kHz = 1;
     }
 }
 
