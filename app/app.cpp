@@ -131,6 +131,7 @@ void setup()
     esc_bus.SendMessage(&c620_s);
 
     /*キャリブレーション終了*/
+    HAL_Delay(300);
     HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, GPIO_PIN_RESET);
 
     /*ループ開始*/
@@ -161,7 +162,7 @@ void loop()
     if (esc_bus.buffer.nvic_.Rx_Callback) {
         if (esc_bus.buffer.nvic_.Id[0]) {
             esc_bus.GetMessage(&c620_r[0]);
-            c620_send.value[0] = 0;
+            // c620_send.value[0] = 0;
 
             if (abs(target_value[0] - (c620_receive[0].value.rpm * 2 * M_PI)) >= set_FF_Active_Position) {
                 c620_send.value[0] += c620_current_to_current(hub_config.ff * (target_value[0] - (c620_receive[0].value.rpm * 2 * M_PI)));
@@ -174,7 +175,7 @@ void loop()
 
         if (esc_bus.buffer.nvic_.Id[1]) {
             esc_bus.GetMessage(&c620_r[1]);
-            c620_send.value[1] = 0;
+            // c620_send.value[1] = 0;
 
             if (abs(target_value[1] - (c620_receive[1].value.rpm * 2 * M_PI)) >= set_FF_Active_Position) {
                 c620_send.value[1] += c620_current_to_current(hub_config.ff * (target_value[1] - (c620_receive[1].value.rpm * 2 * M_PI)));
@@ -187,7 +188,7 @@ void loop()
 
         if (esc_bus.buffer.nvic_.Id[2]) {
             esc_bus.GetMessage(&c620_r[2]);
-            c620_send.value[2] = 0;
+            // c620_send.value[2] = 0;
 
             if (abs(target_value[2] - (c620_receive[2].value.rpm * 2 * M_PI)) >= set_FF_Active_Position) {
                 c620_send.value[2] += c620_current_to_current(hub_config.ff * (target_value[2] - (c620_receive[2].value.rpm * 2 * M_PI)));
@@ -200,7 +201,7 @@ void loop()
 
         if (esc_bus.buffer.nvic_.Id[3]) {
             esc_bus.GetMessage(&c620_r[3]);
-            c620_send.value[3] = 0;
+            // c620_send.value[3] = 0;
 
             if (abs(target_value[3] - (c620_receive[3].value.rpm * 2 * M_PI)) >= set_FF_Active_Position) {
                 c620_send.value[3] += c620_current_to_current(hub_config.ff * (target_value[3] - (c620_receive[3].value.rpm * 2 * M_PI)));

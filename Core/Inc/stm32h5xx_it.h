@@ -68,6 +68,7 @@ void FDCAN1_IT0_IRQHandler(void);
 void FDCAN1_IT1_IRQHandler(void);
 void TIM4_IRQHandler(void);
 void TIM6_IRQHandler(void);
+void ICACHE_IRQHandler(void);
 void FDCAN2_IT0_IRQHandler(void);
 void FDCAN2_IT1_IRQHandler(void);
 /* USER CODE BEGIN EFP */
