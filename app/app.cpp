@@ -68,26 +68,32 @@ void setup()
     HAL_Delay(10);
     HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, GPIO_PIN_SET);
 
-    c620_s.id_     = C620_bace_id;
-    c620_s.len_    = 0x08;
-    c620_s.data_p_ = c620_send.data;
+    for (uint8_t i = 0; i < 30; i++) {
+        HAL_Delay(100);
+        HAL_GPIO_TogglePin(LED_2_GPIO_Port, LED_2_Pin);
+    } /*起動時確認用トグル3秒*/
+
+    c620_s.id_     = C620_bace_id;   /*送信id               絶対定義しないといけない*/
+    c620_s.len_    = 0x08;           /*送信サイズ            絶対定義しないといけない*/
+    c620_s.data_p_ = c620_send.data; /*送信する変数のポインタ 絶対定義しないといけない*/
 
     for (uint8_t i = 0; i < 4; i++) {
-        c620_r[i].id_     = 0x00;
-        c620_r[i].len_    = 0x00;
-        c620_r[i].data_p_ = c620_receive[i].data;
-    }
+        c620_r[i].id_     = 0x00;                 /*受信idが入る変数の初期化*/
+        c620_r[i].len_    = 0x00;                 /*受信したデータのサイズを入れる変数の初期化*/
+        c620_r[i].data_p_ = c620_receive[i].data; /*受信した値を入れるポインタを定義            絶対定義しないといけない*/
+    } /*受信idは使わなくてもいい*/
 
     /*領域の定義*/
 
-    esc_bus.set_Id(C620_bace_id + 1);
-    esc_bus.set_Id(C620_bace_id + 2);
-    esc_bus.set_Id(C620_bace_id + 3);
-    esc_bus.set_Id(C620_bace_id + 4);
+    esc_bus.set_Id(C620_bace_id + 1); /*受信したいidを定義する　最大４つ*/
+    esc_bus.set_Id(C620_bace_id + 2); /*受信したいidを定義する　最大４つ*/
+    esc_bus.set_Id(C620_bace_id + 3); /*受信したいidを定義する　最大４つ*/
+    esc_bus.set_Id(C620_bace_id + 4); /*受信したいidを定義する　最大４つ*/
 
-    esc_bus.set_Id_mask(0x7FF);
+    esc_bus.set_Id_mask(0x7FF); /*idに対してどのようなマスクをかけるのか*/
+    /*実際に使われるidは、set_Id & set_Id_mask の論理値で出る*/
 
-    if (esc_bus.init()) {
+    if (esc_bus.init()) { /*初期化*/
         HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, GPIO_PIN_SET);
     }
 
@@ -96,7 +102,7 @@ void setup()
     c620_send.value[2] = 0x00;
     c620_send.value[3] = 0x00;
 
-    if (esc_bus.SendMessage(&c620_s)) {
+    if (esc_bus.SendMessage(&c620_s)) { /*送信*/
         HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, GPIO_PIN_SET);
         /*送信できてない*/
     } /*全ESC停止*/
@@ -110,12 +116,12 @@ void setup()
     // PID[2].set_gain(0.1, 0.1, 0.1); /*各モーター用のPID*/
     // PID[3].set_gain(0.1, 0.1, 0.1); /*各モーター用のPID*/
 
-    PID[0].set_control_cycle(1000); /*PIDの制御周期*/
-    PID[1].set_control_cycle(1000); /*PIDの制御周期*/
-    PID[2].set_control_cycle(1000); /*PIDの制御周期*/
-    PID[3].set_control_cycle(1000); /*PIDの制御周期*/
+    PID[0].set_control_cycle(1000); /*PIDの制御周期 Hz*/
+    PID[1].set_control_cycle(1000); /*PIDの制御周期 Hz*/
+    PID[2].set_control_cycle(1000); /*PIDの制御周期 Hz*/
+    PID[3].set_control_cycle(1000); /*PIDの制御周期 Hz*/
 
-    HAL_TIM_Base_Start_IT(&htim6);
+    HAL_TIM_Base_Start_IT(&htim6); /*1kHzの周期*/
 
     HAL_Delay(50);
 
