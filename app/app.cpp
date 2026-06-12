@@ -34,6 +34,7 @@ union c620_receive_data_frame {
     struct {
         uint16_t rote_angle; /*角度*/
         uint16_t rpm;        /*速度*/
+        uint16_t torque;     /*トルク*/
         uint8_t temperature; /*温度*/
         uint8_t unused;
     } value;
@@ -49,7 +50,12 @@ struct c620_speed_box {
 
 int16_t c620_current_to_current(int16_t current)
 {
-    return (int16_t)((current & 0xFF) << 8) | ((current & 0xFF00) >> 8);
+    return (int16_t)(((current & 0xFF) << 8) | ((current & 0xFF00) >> 8));
+}
+
+uint16_t c620_rpm_to_rpm(uint16_t rpm)
+{
+    return (uint16_t)(((rpm & 0xFF) << 8) | (rpm & 0xFF00) >> 8);
 }
 
 // CAN
@@ -63,6 +69,8 @@ float target_direction[4];
 
 // public value
 bool timer_1kHz;
+
+uint64_t last_tick;
 
 void Error();
 
@@ -120,10 +128,10 @@ void setup()
     PID[0].set_max_sum_deviation(4.0f);
     PID[0].set_max_sum_deviation(4.0f);
 
-    PID[0].set_gain(0.9f, 0.004f, 0.07f); /*各モーター用のPID*/
-    PID[1].set_gain(0.0f, 0.000f, 0.00f); /*各モーター用のPID*/
-    PID[2].set_gain(0.0f, 0.000f, 0.00f); /*各モーター用のPID*/
-    PID[3].set_gain(0.0f, 0.000f, 0.00f); /*各モーター用のPID*/
+    PID[0].set_gain(0.5f, 0.0f, 0.0f); /*各モーター用のPID*/
+    PID[1].set_gain(0.0f, 0.0f, 0.0f); /*各モーター用のPID*/
+    PID[2].set_gain(0.0f, 0.0f, 0.0f); /*各モーター用のPID*/
+    PID[3].set_gain(0.0f, 0.0f, 0.0f); /*各モーター用のPID*/
 
     PID[0].set_control_cycle(1000); /*PIDの制御周期 Hz*/
     PID[1].set_control_cycle(1000); /*PIDの制御周期 Hz*/
@@ -137,7 +145,7 @@ void setup()
 
     HAL_TIM_Base_Start_IT(&htim6); /*1kHzの周期*/
 
-    HAL_Delay(50);
+    HAL_Delay(100);
 
     /*キャリブレーション開始*/
 
@@ -159,10 +167,10 @@ void setup()
     /*ループ開始*/
     HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, GPIO_PIN_SET);
 
-    target_value[0] = (float)M_PI * 1.0f;
-    target_value[1] = (float)M_PI * 1.0f;
-    target_value[2] = (float)M_PI * 1.0f;
-    target_value[3] = (float)M_PI * 1.0f;
+    target_value[0] = (float)M_PI * 2.0f * 1.0f;
+    target_value[1] = (float)M_PI * 2.0f * 1.0f;
+    target_value[2] = (float)M_PI * 2.0f * 1.0f;
+    target_value[3] = (float)M_PI * 2.0f * 1.0f;
 
     PID[0].set_target(target_value[0]);
     PID[1].set_target(target_value[1]);
@@ -176,28 +184,36 @@ void setup()
             target_direction[i] = -1.0f;
         }
     }
+    last_tick = HAL_GetTick();
 }
 
 void loop()
 {
-    if (main_fdcan.buffer.nvic_.Rx_Callback) {
-        if (main_bus.get_gain(hub_config)) {
-            PID[0].set_gain(hub_config.kp, hub_config.ki, hub_config.kd); /*各モーター用のPID*/
-            PID[1].set_gain(hub_config.kp, hub_config.ki, hub_config.kd); /*各モーター用のPID*/
-            PID[2].set_gain(hub_config.kp, hub_config.ki, hub_config.kd); /*各モーター用のPID*/
-            PID[3].set_gain(hub_config.kp, hub_config.ki, hub_config.kd); /*各モーター用のPID*/
-        }
+    // if (main_fdcan.buffer.nvic_.Rx_Callback) {
+    //     if (main_bus.get_gain(hub_config)) {
+    //         PID[0].set_gain(hub_config.kp, hub_config.ki, hub_config.kd); /*各モーター用のPID*/
+    //         PID[1].set_gain(hub_config.kp, hub_config.ki, hub_config.kd); /*各モーター用のPID*/
+    //         PID[2].set_gain(hub_config.kp, hub_config.ki, hub_config.kd); /*各モーター用のPID*/
+    //         PID[3].set_gain(hub_config.kp, hub_config.ki, hub_config.kd); /*各モーター用のPID*/
+    //     }
 
-        if (main_bus.get_angular_velocities(target_value)) {
-            PID[0].set_target(target_value[0]);
-            PID[1].set_target(target_value[1]);
-            PID[2].set_target(target_value[2]);
-            PID[3].set_target(target_value[3]);
-        }
-    }
+    //    if (main_bus.get_angular_velocities(target_value)) {
+    //        PID[0].set_target(target_value[0]);
+    //        PID[1].set_target(target_value[1]);
+    //        PID[2].set_target(target_value[2]);
+    //        PID[3].set_target(target_value[3]);
+    //    }
+    //    main_fdcan.buffer.nvic_.Rx_Callback = 0;
+    //}
 
 #define FF_Active_rad          1.0f
 #define set_FF_Active_Position 2.0f * M_PI* FF_Active_rad
+
+    if ((HAL_GetTick() - last_tick) >= 2) {
+        HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, GPIO_PIN_SET);
+    } else {
+        HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, GPIO_PIN_RESET);
+    }
 
     if (esc_bus.buffer.nvic_.Rx_Callback) { /*バス全体の割り込みフラグ*/
 
@@ -213,9 +229,11 @@ void loop()
             }
 
             c620_send.value[0] +=
-                c620_current_to_current((int16_t)(PID[0].PID(target_direction[0] * ((float)c620_receive[0].value.rpm / 60.0f) * 2.0f * (float)M_PI)));
+                c620_current_to_current(7 * (int16_t)(PID[0].PID(((float)c620_rpm_to_rpm(c620_receive[0].value.rpm) / 60.0f) * 2.0f * (float)M_PI)));
 
-            // esc_bus.SendMessage(&c620_s);
+            //  esc_bus.SendMessage(&c620_s);
+
+            last_tick = HAL_GetTick();
 
             esc_bus.buffer.nvic_.Id[0] = 0;
         }
