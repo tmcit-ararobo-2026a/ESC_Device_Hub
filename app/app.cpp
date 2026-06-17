@@ -14,7 +14,7 @@
 
 gn10_can::drivers::DriverSTM32FDCAN main_bus_fdcan(&hfdcan1);
 gn10_can::FDCANBus main_fdcan_bus(main_bus_fdcan);
-gn10_can::devices::ESCHubServer main_bus(main_fdcan_bus, 0);
+gn10_can::devices::ESCHubServer esc_hub_server(main_fdcan_bus, 0);
 gn10_can::devices::ESCHubConfig hub_config;
 
 #define maidui3_xcan maidui3_hal::Drivers::XCAN
@@ -50,7 +50,7 @@ struct c620_speed_box {
 
 int16_t c620_current_to_current(int16_t current)
 {
-    return (int16_t)(((current & 0xFF) << 8) | ((current & 0xFF00) >> 8));
+    return static_cast<int16_t>(((current & 0xFF) << 8) | ((current & 0xFF00) >> 8));
 }
 
 int16_t c620_rpm_to_rpm(uint16_t rpm)
@@ -65,12 +65,11 @@ maidui3_hal::Control::PID::Proportional_Integral_Derivative PID[4];
 // PID
 
 float target_value[4];
-float target_direction[4];
 
 // public value
 bool timer_1kHz;
 
-uint64_t last_tick;
+// test
 
 void Error();
 
@@ -123,15 +122,16 @@ void setup()
 
     /*CANの初期化*/
 
-    PID[0].set_max_sum_deviation(4000.0f);
-    PID[0].set_max_sum_deviation(4000.0f);
-    PID[0].set_max_sum_deviation(4000.0f);
-    PID[0].set_max_sum_deviation(4000.0f);
+    PID[0].set_max_sum_deviation(4000000000000.0f);
+    PID[0].set_max_sum_deviation(4000000000000.0f);
+    PID[0].set_max_sum_deviation(4000000000000.0f);
+    PID[0].set_max_sum_deviation(4000000000000.0f);
 
-    PID[0].set_gain(5.0f, 0.0f, 0.0f); /*各モーター用のPID*/
-    PID[1].set_gain(0.0f, 0.0f, 0.0f); /*各モーター用のPID*/
-    PID[2].set_gain(0.0f, 0.0f, 0.0f); /*各モーター用のPID*/
-    PID[3].set_gain(0.0f, 0.0f, 0.0f); /*各モーター用のPID*/
+    hub_config.ff = 300.0f;
+    PID[0].set_gain(6000.0f, 50.0f, 3.0f); /*各モーター用のPID*/
+    PID[1].set_gain(6000.0f, 50.0f, 3.0f); /*各モーター用のPID*/
+    PID[2].set_gain(6000.0f, 50.0f, 3.0f); /*各モーター用のPID*/
+    PID[3].set_gain(6000.0f, 50.0f, 3.0f); /*各モーター用のPID*/
 
     PID[0].set_control_cycle(1000); /*PIDの制御周期 Hz*/
     PID[1].set_control_cycle(1000); /*PIDの制御周期 Hz*/
@@ -147,12 +147,7 @@ void setup()
 
     HAL_Delay(100);
 
-    /*キャリブレーション開始*/
-
     /*モーター停止*/
-
-    hub_config.ff = 0.0f;
-
     c620_send.value[0] = 0;
     c620_send.value[1] = 0;
     c620_send.value[2] = 0;
@@ -160,82 +155,62 @@ void setup()
 
     esc_bus.SendMessage(&c620_s);
 
-    /*キャリブレーション終了*/
-    HAL_Delay(300);
-    HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, GPIO_PIN_RESET);
-
-    /*ループ開始*/
-    HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, GPIO_PIN_SET);
-
-    target_value[0] = (float)M_PI * 2.0f * 19.0f + 4.0f;
-    target_value[1] = (float)M_PI * 2.0f * 19.0f + 2.0f;
-    target_value[2] = (float)M_PI * 2.0f * 19.0f + 2.0f;
-    target_value[3] = (float)M_PI * 2.0f * 19.0f + 2.0f;
+    target_value[0] = 0;
+    target_value[1] = 0;
+    target_value[2] = 0;
+    target_value[3] = 0;
 
     PID[0].set_target(target_value[0]);
     PID[1].set_target(target_value[1]);
     PID[2].set_target(target_value[2]);
     PID[3].set_target(target_value[3]);
 
-    for (uint8_t i = 0; i < 4; i++) {
-        if (target_value[i] >= 0) {
-            target_direction[i] = 1.0f;
-        } else {
-            target_direction[i] = -1.0f;
-        }
-    }
-    last_tick = HAL_GetTick();
+    HAL_Delay(300);
+    HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, GPIO_PIN_RESET);
+
+    /*ループ開始*/
+    HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, GPIO_PIN_SET);
 }
 
 void loop()
 {
-    // if (main_fdcan.buffer.nvic_.Rx_Callback) {
-    //     if (main_bus.get_gain(hub_config)) {
-    //         PID[0].set_gain(hub_config.kp, hub_config.ki, hub_config.kd); /*各モーター用のPID*/
-    //         PID[1].set_gain(hub_config.kp, hub_config.ki, hub_config.kd); /*各モーター用のPID*/
-    //         PID[2].set_gain(hub_config.kp, hub_config.ki, hub_config.kd); /*各モーター用のPID*/
-    //         PID[3].set_gain(hub_config.kp, hub_config.ki, hub_config.kd); /*各モーター用のPID*/
-    //     }
+    if (main_fdcan.buffer.nvic_.Rx_Callback) {
+        if (esc_hub_server.get_gain(hub_config)) {
+            PID[0].set_gain(hub_config.kp, hub_config.ki, hub_config.kd); /*各モーター用のPID*/
+            PID[1].set_gain(hub_config.kp, hub_config.ki, hub_config.kd); /*各モーター用のPID*/
+            PID[2].set_gain(hub_config.kp, hub_config.ki, hub_config.kd); /*各モーター用のPID*/
+            PID[3].set_gain(hub_config.kp, hub_config.ki, hub_config.kd); /*各モーター用のPID*/
+        }
 
-    //    if (main_bus.get_angular_velocities(target_value)) {
-    //        PID[0].set_target(target_value[0]);
-    //        PID[1].set_target(target_value[1]);
-    //        PID[2].set_target(target_value[2]);
-    //        PID[3].set_target(target_value[3]);
-    //    }
-    //    main_fdcan.buffer.nvic_.Rx_Callback = 0;
-    //}
+        if (esc_hub_server.get_angular_velocities(target_value)) {
+            PID[0].set_target(target_value[0]);
+            PID[1].set_target(target_value[1]);
+            PID[2].set_target(target_value[2]);
+            PID[3].set_target(target_value[3]);
+        }
+        main_fdcan.buffer.nvic_.Rx_Callback = 0;
+    }
 
-    // static float speed;
-    // static uint32_t last;
-    // if ((HAL_GetTick() - last) >= 100) {
-    //     speed += 0.1f;
-    //     last = HAL_GetTick();
-    // }
-    // PID[0].set_target(speed * M_PI + 2.0f * 19.0f);
-    // PID[1].set_target(speed * M_PI + 2.0f * 19.0f);
-    // PID[2].set_target(speed * M_PI + 2.0f * 19.0f);
-    // PID[3].set_target(speed * M_PI + 2.0f * 19.0f);
-    // if (speed >= 4.0f) speed = 0.1f;
-
-#define FF_Active_rad          1.0f
+#define FF_Active_rad          0.5f
 #define set_FF_Active_Position 2.0f * M_PI* FF_Active_rad
 
     if (esc_bus.buffer.nvic_.Rx_Callback) { /*バス全体の割り込みフラグ*/
 
         if (esc_bus.buffer.nvic_.Id[0]) {      /*Index 0 の割り込みフラグ*/
             esc_bus.GetMessage(&c620_r[0], 0); /*Index 0 の受信*/
-            c620_send.value[0] = 0;
 
-            // if (abs(target_value[0] - (target_direction[0] * c620_receive[0].value.rpm / 60.0f * 2.0f * (float)M_PI)) >= set_FF_Active_Position) {
-            //     c620_send.value[0] += c620_current_to_current(
-            //         (int16_t)(hub_config.ff *
-            //                   (target_value[0] - (target_direction[0] * ((float)c620_receive[0].value.rpm / 60.0f) * 2.0f * (float)M_PI)))
-            //     );
-            // }
+            static float send_value_0;
+            static float rad_p_s_0;
 
-            c620_send.value[0] +=
-                c620_current_to_current(7 * (int16_t)(PID[0].PID(((float)c620_rpm_to_rpm(c620_receive[0].value.rpm) / 60.0f) * 2.0f * (float)M_PI)));
+            rad_p_s_0 = (float)c620_rpm_to_rpm(c620_receive[0].value.rpm) / 19.0f / 60.0f * 2.0f * (float)M_PI;
+
+            if (abs(target_value[0] - rad_p_s_0) >= set_FF_Active_Position) {
+                send_value_0 = (int16_t)(hub_config.ff * (target_value[0] - rad_p_s_0));
+            }
+
+            send_value_0 += PID[0].PID(rad_p_s_0);
+
+            c620_send.value[0] = c620_current_to_current((int16_t)(send_value_0 > 32767 ? 32767 : send_value_0 < -32768 ? -32768 : send_value_0));
 
             esc_bus.SendMessage(&c620_s);
 
@@ -244,16 +219,19 @@ void loop()
 
         if (esc_bus.buffer.nvic_.Id[1]) {
             esc_bus.GetMessage(&c620_r[1], 1);
-            c620_send.value[1] = 0;
 
-            // if (abs(target_value[1] - (target_direction[1] * c620_receive[1].value.rpm / 60 * 2 * M_PI)) >= set_FF_Active_Position) {
-            //     c620_send.value[1] += c620_current_to_current(
-            //         (int16_t)(hub_config.ff * (target_value[1] - (target_direction[1] * c620_receive[1].value.rpm / 60 * 2 * M_PI)))
-            //     );
-            // }
+            static float send_value_1;
+            static float rad_p_s_1;
 
-            c620_send.value[1] +=
-                c620_current_to_current(7 * (int16_t)(PID[1].PID(((float)c620_rpm_to_rpm(c620_receive[1].value.rpm) / 60.0f) * 2.0f * (float)M_PI)));
+            rad_p_s_1 = (float)c620_rpm_to_rpm(c620_receive[1].value.rpm) / 19.0f / 60.0f * 2.0f * (float)M_PI;
+
+            if (abs(target_value[1] - rad_p_s_1) >= set_FF_Active_Position) {
+                send_value_1 = (int16_t)(hub_config.ff * (target_value[1] - rad_p_s_1));
+            }
+
+            send_value_1 += PID[1].PID(rad_p_s_1);
+
+            c620_send.value[1] = c620_current_to_current((int16_t)(send_value_1 > 32767 ? 32767 : send_value_1 < -32768 ? -32768 : send_value_1));
 
             esc_bus.SendMessage(&c620_s);
 
@@ -262,16 +240,19 @@ void loop()
 
         if (esc_bus.buffer.nvic_.Id[2]) {
             esc_bus.GetMessage(&c620_r[2], 2);
-            c620_send.value[2] = 0;
 
-            // if (abs(target_value[2] - (target_direction[2] * c620_receive[2].value.rpm / 60 * 2 * M_PI)) >= set_FF_Active_Position) {
-            //     c620_send.value[2] += c620_current_to_current(
-            //         (int16_t)(hub_config.ff * (target_value[2] - (target_direction[2] * c620_receive[2].value.rpm / 60 * 2 * M_PI)))
-            //     );
-            // }
+            static float send_value_2;
+            static float rad_p_s_2;
 
-            c620_send.value[2] +=
-                c620_current_to_current(7 * (int16_t)(PID[2].PID(((float)c620_rpm_to_rpm(c620_receive[2].value.rpm) / 60.0f) * 2.0f * (float)M_PI)));
+            rad_p_s_2 = (float)c620_rpm_to_rpm(c620_receive[2].value.rpm) / 19.0f / 60.0f * 2.0f * (float)M_PI;
+
+            if (abs(target_value[2] - rad_p_s_2) >= set_FF_Active_Position) {
+                send_value_2 = (int16_t)(hub_config.ff * (target_value[2] - rad_p_s_2));
+            }
+
+            send_value_2 += PID[2].PID(rad_p_s_2);
+
+            c620_send.value[2] = c620_current_to_current((int16_t)(send_value_2 > 32767 ? 32767 : send_value_2 < -32768 ? -32768 : send_value_2));
 
             esc_bus.SendMessage(&c620_s);
 
@@ -282,14 +263,18 @@ void loop()
             esc_bus.GetMessage(&c620_r[3], 3);
             c620_send.value[3] = 0;
 
-            // if (abs(target_value[3] - (target_direction[3] * c620_receive[3].value.rpm / 60 * 2 * M_PI)) >= set_FF_Active_Position) {
-            //     c620_send.value[3] += c620_current_to_current(
-            //         (int16_t)(hub_config.ff * (target_value[3] - (target_direction[3] * c620_receive[3].value.rpm / 60 * 2 * M_PI)))
-            //     );
-            // }
+            static float send_value_3;
+            static float rad_p_s_3;
 
-            c620_send.value[3] +=
-                c620_current_to_current(7 * (int16_t)(PID[3].PID(((float)c620_rpm_to_rpm(c620_receive[3].value.rpm) / 60.0f) * 2.0f * (float)M_PI)));
+            rad_p_s_3 = (float)c620_rpm_to_rpm(c620_receive[3].value.rpm) / 19.0f / 60.0f * 2.0f * (float)M_PI;
+
+            if (abs(target_value[3] - rad_p_s_3) >= set_FF_Active_Position) {
+                send_value_3 = (int16_t)(hub_config.ff * (target_value[3] - rad_p_s_3));
+            }
+
+            send_value_3 += PID[3].PID(rad_p_s_3);
+
+            c620_send.value[3] = c620_current_to_current((int16_t)(send_value_3 > 32767 ? 32767 : send_value_3 < -32768 ? -32768 : send_value_3));
 
             esc_bus.SendMessage(&c620_s);
 
