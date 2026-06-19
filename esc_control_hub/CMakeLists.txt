@@ -4,7 +4,6 @@ add_library(esc_control_hub STATIC
     src/app.cpp
     src/fdcan_driver.cpp
     src/can_driver.cpp
-    src/serial_printf.cpp
 )
 
 target_include_directories(esc_control_hub PUBLIC
