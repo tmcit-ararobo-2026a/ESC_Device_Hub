@@ -7,6 +7,7 @@
 #include "gn10_can/core/can_bus.hpp"
 #include "gn10_can/devices/esc_hub_server.hpp"
 // esc-control-hub
+#include "esc_control_hub/c6x_can.hpp"
 #include "esc_control_hub/can_driver.hpp"
 #include "esc_control_hub/fdcan_driver.hpp"
 #include "esc_control_hub/pid.hpp"
@@ -19,9 +20,9 @@ constexpr uint32_t k_target_last_update_time_ms   = 500;
 
 uint32_t heartbeat_last_toggle_time_ms = 0;
 uint32_t target_last_update_time_ms    = 0;
-// configuration
+// Configuration
 gn10_motor::PIDConfig<float> pid_config[4];
-// Calc
+// Calculate
 gn10_motor::PID<float> pid[4]{
     gn10_motor::PID(pid_config[0]), gn10_motor::PID(pid_config[1]), gn10_motor::PID(pid_config[2]), gn10_motor::PID(pid_config[3])
 };
@@ -45,6 +46,8 @@ gn10_can::drivers::CANDriver can2_driver(&hfdcan2);
 gn10_can::FDCANBus fdcan1_bus(fdcan1_driver);
 // CAN Devices
 gn10_can::devices::ESCHubServer server(fdcan1_bus, 1);
+// C620 / C610
+c6x0_can::C6XCAN c6x0(can2_driver);
 
 }  // namespace
 
@@ -87,9 +90,19 @@ void loop()
         // calculate PID
         currents[i] = pid[i].update(targets[i], 0.0f, 0.001f);
     }
-    // Safety guard
-    if ((now_ms - target_last_update_time_ms) < k_target_last_update_time_ms) {
+    // Currents to Integer
+    int16_t current_data[4];
+    for (uint8_t i = 0; i < 4; i++) {
+        current_data[i] = int16_t(currents[i] * c6x0_can::C620_CURRENT_CONVERSION);
     }
+    // Safety guard
+    if ((now_ms - target_last_update_time_ms) > k_target_last_update_time_ms) {
+        for (uint8_t i = 0; i < 4; i++) {
+            current_data[0] = 0;
+        }
+    }
+    // Send Currents
+    c6x0.set_currents_1_3(current_data);
 
     // Basic System Process
     update_heartbeat_led();
@@ -106,6 +119,7 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef* hfdcan, uint32_t RxFifo0ITs)
     if (hfdcan->Instance == hfdcan1.Instance) {
         fdcan1_bus.update();
     } else {
+        c6x0.update();
     }
 }
 }
