@@ -20,14 +20,15 @@ constexpr uint32_t k_target_last_update_time_ms   = 500;
 
 uint32_t heartbeat_last_toggle_time_ms = 0;
 uint32_t target_last_update_time_ms    = 0;
+float feedbacks[4];
 // Configuration
 gn10_motor::PIDConfig<float> pid_config[4];
+gn10_can::devices::MotorConfig motor_configres[4];
 // Calculate
 gn10_motor::PID<float> pid[4]{
     gn10_motor::PID(pid_config[0]), gn10_motor::PID(pid_config[1]), gn10_motor::PID(pid_config[2]), gn10_motor::PID(pid_config[3])
 };
 
-gn10_can::devices::MotorConfig motor_configres[4];
 /**
  * @brief Toggle heartbeat LED at a fixed interval.
  */
@@ -56,6 +57,11 @@ c6x0_can::C6XCAN c6x0(can2_driver);
  */
 void setup()
 {
+    for (uint8_t i = 0; i < 4; i++) {
+        pid_config[i].output_limit   = 20.0f;
+        pid_config[i].integral_limit = 1.0f;
+    }
+
     // CAN initialization
     fdcan1_driver.init();
     can2_driver.init();
@@ -71,12 +77,17 @@ void loop()
 {
     float targets[4]  = {0.0f, 0.0f, 0.0f, 0.0f};
     float currents[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+    // Update feedbacks
+    for (uint8_t i = 0; i < 4; i++) {
+        feedbacks[i] = 2 * M_PI * float(c6x0.get_feedback_speed(i)) / 60.0f / 19.0f;
+    }
+    // server.set_angular_velocity_feedbacks(feedbacks);
     // Update targets
     const uint32_t now_ms = HAL_GetTick();
     if (server.get_angular_velocities(targets)) {
         target_last_update_time_ms = now_ms;
+        HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, GPIO_PIN_SET);
     }
-
     // Update parameters by client and calculate PID
     for (uint8_t i = 0; i < 4; i++) {
         // Update configuration
@@ -86,9 +97,10 @@ void loop()
         float ff_gain;
         if (server.get_gains(i, pid_config[i].kp, pid_config[i].ki, pid_config[i].kd, ff_gain)) {
             pid[i].set_config(pid_config[i]);
+            HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, GPIO_PIN_SET);
         }
         // calculate PID
-        currents[i] = pid[i].update(targets[i], 0.0f, 0.001f);
+        currents[i] = pid[i].update(targets[i], feedbacks[i], 0.001f);
     }
     // Currents to Integer
     int16_t current_data[4];
