@@ -9,13 +9,18 @@
 #include "../maidui3_hal/Drivers/FDCAN/mXCAN.hpp"
 #include "driver_fdcan.hpp"
 #include "gn10_can/core/fdcan_bus.hpp"
-#include "gn10_can/devices/esc_hub_config.hpp"
 #include "gn10_can/devices/esc_hub_server.hpp"
 
+// gn10-can
 gn10_can::drivers::DriverSTM32FDCAN main_bus_fdcan(&hfdcan1);
 gn10_can::FDCANBus main_fdcan_bus(main_bus_fdcan);
 gn10_can::devices::ESCHubServer esc_hub_server(main_fdcan_bus, 0);
-gn10_can::devices::ESCHubConfig hub_config;
+// configuration
+gn10_can::devices::MotorConfig motor_config;
+float p_gains[4];
+float i_gains[4];
+float d_gains[4];
+float ff_gains[4];
 
 #define maidui3_xcan maidui3_hal::Drivers::XCAN
 #define C620_bace_id 0x200
@@ -127,7 +132,6 @@ void setup()
     PID[0].set_max_sum_deviation(4000000000000.0f);
     PID[0].set_max_sum_deviation(4000000000000.0f);
 
-    hub_config.ff = 300.0f;
     PID[0].set_gain(6000.0f, 50.0f, 3.0f); /*各モーター用のPID*/
     PID[1].set_gain(6000.0f, 50.0f, 3.0f); /*各モーター用のPID*/
     PID[2].set_gain(6000.0f, 50.0f, 3.0f); /*各モーター用のPID*/
@@ -175,13 +179,13 @@ void setup()
 void loop()
 {
     if (main_fdcan.buffer.nvic_.Rx_Callback) {
-        if (esc_hub_server.get_gain(hub_config)) {
-            PID[0].set_gain(hub_config.kp, hub_config.ki, hub_config.kd); /*各モーター用のPID*/
-            PID[1].set_gain(hub_config.kp, hub_config.ki, hub_config.kd); /*各モーター用のPID*/
-            PID[2].set_gain(hub_config.kp, hub_config.ki, hub_config.kd); /*各モーター用のPID*/
-            PID[3].set_gain(hub_config.kp, hub_config.ki, hub_config.kd); /*各モーター用のPID*/
+        // Update PID&FF gains
+        for (uint8_t i = 0; i < 4; i++) {
+            if (esc_hub_server.get_gains(i, p_gains[i], i_gains[i], d_gains[i], ff_gains[i])) {
+                PID[i].set_gain(p_gains[i], i_gains[i], d_gains[i]);
+            }
         }
-
+        // Update target angular velocies
         if (esc_hub_server.get_angular_velocities(target_value)) {
             PID[0].set_target(target_value[0]);
             PID[1].set_target(target_value[1]);
@@ -205,7 +209,7 @@ void loop()
             rad_p_s_0 = (float)c620_rpm_to_rpm(c620_receive[0].value.rpm) / 19.0f / 60.0f * 2.0f * (float)M_PI;
 
             if (abs(target_value[0] - rad_p_s_0) >= set_FF_Active_Position) {
-                send_value_0 = (int16_t)(hub_config.ff * (target_value[0] - rad_p_s_0));
+                send_value_0 = (int16_t)(ff_gains[0] * (target_value[0] - rad_p_s_0));
             }
 
             send_value_0 += PID[0].PID(rad_p_s_0);
@@ -226,7 +230,7 @@ void loop()
             rad_p_s_1 = (float)c620_rpm_to_rpm(c620_receive[1].value.rpm) / 19.0f / 60.0f * 2.0f * (float)M_PI;
 
             if (abs(target_value[1] - rad_p_s_1) >= set_FF_Active_Position) {
-                send_value_1 = (int16_t)(hub_config.ff * (target_value[1] - rad_p_s_1));
+                send_value_1 = (int16_t)(ff_gains[1] * (target_value[1] - rad_p_s_1));
             }
 
             send_value_1 += PID[1].PID(rad_p_s_1);
@@ -247,7 +251,7 @@ void loop()
             rad_p_s_2 = (float)c620_rpm_to_rpm(c620_receive[2].value.rpm) / 19.0f / 60.0f * 2.0f * (float)M_PI;
 
             if (abs(target_value[2] - rad_p_s_2) >= set_FF_Active_Position) {
-                send_value_2 = (int16_t)(hub_config.ff * (target_value[2] - rad_p_s_2));
+                send_value_2 = (int16_t)(ff_gains[2] * (target_value[2] - rad_p_s_2));
             }
 
             send_value_2 += PID[2].PID(rad_p_s_2);
@@ -269,7 +273,7 @@ void loop()
             rad_p_s_3 = (float)c620_rpm_to_rpm(c620_receive[3].value.rpm) / 19.0f / 60.0f * 2.0f * (float)M_PI;
 
             if (abs(target_value[3] - rad_p_s_3) >= set_FF_Active_Position) {
-                send_value_3 = (int16_t)(hub_config.ff * (target_value[3] - rad_p_s_3));
+                send_value_3 = (int16_t)(ff_gains[3] * (target_value[3] - rad_p_s_3));
             }
 
             send_value_3 += PID[3].PID(rad_p_s_3);
