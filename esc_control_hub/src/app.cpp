@@ -111,6 +111,7 @@ void loop()
     for (uint8_t i = 0; i < 4; i++) {
         // Update configuration
         if (server != nullptr && server->get_init(i, motor_configres[i])) {
+            HAL_GPIO_WritePin(LED_4_GPIO_Port, LED_4_Pin, GPIO_PIN_SET);
         }
         // Update gains
         float ff_gain;
