@@ -98,7 +98,7 @@ void loop()
     float currents[4] = {0.0f, 0.0f, 0.0f, 0.0f};
     // Update feedbacks
     for (uint8_t i = 0; i < 4; i++) {
-        feedbacks[i] = 2 * M_PI * float(c6x0.get_feedback_speed(i)) / 60.0f / 19.0f;
+        feedbacks[i] = 2 * M_PI * float(c6x0.get_feedback_speed(i)) / 60.0f;
     }
     // server.set_angular_velocity_feedbacks(feedbacks);
     // Update targets
