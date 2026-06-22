@@ -24,7 +24,7 @@ uint32_t target_last_update_time_ms    = 0;
 float feedbacks[4];
 constexpr float max_current_c610    = 10.0f;
 constexpr float max_current_c620    = 20.0f;
-float current_to_data_conversion[i] = 0.0f;
+float current_to_data_conversion[4] = {0.0f, 0.0f, 0.0f, 0.0f};
 // Configuration
 gn10_motor::PIDConfig<float> pid_config[4];
 gn10_can::devices::MotorConfig motor_configres[4];
