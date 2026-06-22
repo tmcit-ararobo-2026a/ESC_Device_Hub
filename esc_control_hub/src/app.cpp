@@ -22,6 +22,9 @@ constexpr uint32_t k_target_last_update_time_ms   = 500;
 uint32_t heartbeat_last_toggle_time_ms = 0;
 uint32_t target_last_update_time_ms    = 0;
 float feedbacks[4];
+constexpr float max_current_c610    = 10.0f;
+constexpr float max_current_c620    = 20.0f;
+float current_to_data_conversion[i] = 0.0f;
 // Configuration
 gn10_motor::PIDConfig<float> pid_config[4];
 gn10_can::devices::MotorConfig motor_configres[4];
@@ -77,8 +80,9 @@ void setup()
     server = new (server_storage) gn10_can::devices::ESCHubServer(fdcan1_bus, device_id);
 
     for (uint8_t i = 0; i < 4; i++) {
-        pid_config[i].output_limit   = 20.0f;
-        pid_config[i].integral_limit = 1.0f;
+        pid_config[i].output_limit    = 20.0f;
+        pid_config[i].integral_limit  = 1.0f;
+        current_to_data_conversion[i] = c6x0_can::C620_CURRENT_CONVERSION;
     }
 
     // CAN initialization
@@ -95,7 +99,7 @@ void setup()
 void loop()
 {
     float targets[4]  = {0.0f, 0.0f, 0.0f, 0.0f};
-    float currents[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+    float currents[4] = {0.0f, 0.0f, 0.0f, 0.0f};  // [A]
     // Update feedbacks
     for (uint8_t i = 0; i < 4; i++) {
         feedbacks[i] = 2 * M_PI * float(c6x0.get_feedback_speed(i)) / 60.0f;
@@ -112,6 +116,24 @@ void loop()
         // Update configuration
         if (server != nullptr && server->get_init(i, motor_configres[i])) {
             HAL_GPIO_WritePin(LED_4_GPIO_Port, LED_4_Pin, GPIO_PIN_SET);
+            float max_current = 0.0f;
+            switch (motor_configres[i].get_motor_type()) {
+                case gn10_can::devices::MotorType::C610:
+                    max_current                   = max_current_c610;
+                    current_to_data_conversion[i] = c6x0_can::C610_CURRENT_CONVERSION;
+                    break;
+
+                case gn10_can::devices::MotorType::C620:
+                    max_current                   = max_current_c620;
+                    current_to_data_conversion[i] = c6x0_can::C620_CURRENT_CONVERSION;
+                    break;
+
+                default:
+                    max_current                   = max_current_c620;
+                    current_to_data_conversion[i] = c6x0_can::C620_CURRENT_CONVERSION;
+                    break;
+            }
+            pid_config[i].output_limit = max_current;
         }
         // Update gains
         float ff_gain;
