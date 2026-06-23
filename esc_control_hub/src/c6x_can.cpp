@@ -35,7 +35,7 @@ bool C6XCAN::set_currents_1_3(int16_t currents[4])
     }
     gn10_can::CANFrame frame;
     frame.data = data;
-    frame.dlc  = 4;
+    frame.dlc  = 8;
     frame.id   = SEND_CANID_0_3;
     return can_driver_.send(frame);
 }
@@ -51,7 +51,7 @@ bool C6XCAN::set_currents_4_7(int16_t currents[4])
     }
     gn10_can::CANFrame frame;
     frame.data = data;
-    frame.dlc  = 4;
+    frame.dlc  = 8;
     frame.id   = SEND_CANID_4_7;
     return can_driver_.send(frame);
 }
