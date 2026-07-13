@@ -184,7 +184,7 @@
   */
 
 #define  VDD_VALUE                  3300UL /*!< Value of VDD in mv */
-#define  TICK_INT_PRIORITY          (15UL)  /*!< tick interrupt priority (lowest by default) */
+#define  TICK_INT_PRIORITY          (1UL)  /*!< tick interrupt priority */
 #define  USE_RTOS                   0U
 #define  PREFETCH_ENABLE            0U               /*!< Enable prefetch */
 
@@ -209,7 +209,7 @@
   *        for each PPP peripheral).
   */
 #define  USE_HAL_ADC_REGISTER_CALLBACKS       0U    /* ADC register callback disabled       */
-#define  USE_HAL_CCB_REGISTER_CALLBACKS           0U /* CCB register callback disabled       */
+#define  USE_HAL_CCB_REGISTER_CALLBACKS       0U    /* CCB register callback disabled       */
 #define  USE_HAL_CEC_REGISTER_CALLBACKS       0U    /* CEC register callback disabled       */
 #define  USE_HAL_COMP_REGISTER_CALLBACKS      0U    /* COMP register callback disabled      */
 #define  USE_HAL_CORDIC_REGISTER_CALLBACKS    0U    /* CORDIC register callback disabled    */

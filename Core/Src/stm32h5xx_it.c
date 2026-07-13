@@ -57,8 +57,6 @@
 /* External variables --------------------------------------------------------*/
 extern FDCAN_HandleTypeDef hfdcan1;
 extern FDCAN_HandleTypeDef hfdcan2;
-extern RTC_HandleTypeDef hrtc;
-extern TIM_HandleTypeDef htim4;
 extern TIM_HandleTypeDef htim6;
 /* USER CODE BEGIN EV */
 
@@ -203,132 +201,6 @@ void SysTick_Handler(void)
 /******************************************************************************/
 
 /**
-  * @brief This function handles RTC non-secure interrupt.
-  */
-void RTC_IRQHandler(void)
-{
-  /* USER CODE BEGIN RTC_IRQn 0 */
-
-  /* USER CODE END RTC_IRQn 0 */
-  HAL_RTCEx_WakeUpTimerIRQHandler(&hrtc);
-  /* USER CODE BEGIN RTC_IRQn 1 */
-
-  /* USER CODE END RTC_IRQn 1 */
-}
-
-/**
-  * @brief This function handles EXTI Line4 interrupt.
-  */
-void EXTI4_IRQHandler(void)
-{
-  /* USER CODE BEGIN EXTI4_IRQn 0 */
-
-  /* USER CODE END EXTI4_IRQn 0 */
-  HAL_GPIO_EXTI_IRQHandler(LIM4_1_Pin);
-  /* USER CODE BEGIN EXTI4_IRQn 1 */
-
-  /* USER CODE END EXTI4_IRQn 1 */
-}
-
-/**
-  * @brief This function handles EXTI Line8 interrupt.
-  */
-void EXTI8_IRQHandler(void)
-{
-  /* USER CODE BEGIN EXTI8_IRQn 0 */
-
-  /* USER CODE END EXTI8_IRQn 0 */
-  HAL_GPIO_EXTI_IRQHandler(LIM3_1_Pin);
-  /* USER CODE BEGIN EXTI8_IRQn 1 */
-
-  /* USER CODE END EXTI8_IRQn 1 */
-}
-
-/**
-  * @brief This function handles EXTI Line9 interrupt.
-  */
-void EXTI9_IRQHandler(void)
-{
-  /* USER CODE BEGIN EXTI9_IRQn 0 */
-
-  /* USER CODE END EXTI9_IRQn 0 */
-  HAL_GPIO_EXTI_IRQHandler(LIM3_2_Pin);
-  /* USER CODE BEGIN EXTI9_IRQn 1 */
-
-  /* USER CODE END EXTI9_IRQn 1 */
-}
-
-/**
-  * @brief This function handles EXTI Line10 interrupt.
-  */
-void EXTI10_IRQHandler(void)
-{
-  /* USER CODE BEGIN EXTI10_IRQn 0 */
-
-  /* USER CODE END EXTI10_IRQn 0 */
-  HAL_GPIO_EXTI_IRQHandler(LIM4_2_Pin);
-  /* USER CODE BEGIN EXTI10_IRQn 1 */
-
-  /* USER CODE END EXTI10_IRQn 1 */
-}
-
-/**
-  * @brief This function handles EXTI Line11 interrupt.
-  */
-void EXTI11_IRQHandler(void)
-{
-  /* USER CODE BEGIN EXTI11_IRQn 0 */
-
-  /* USER CODE END EXTI11_IRQn 0 */
-  HAL_GPIO_EXTI_IRQHandler(LIM2_1_Pin);
-  /* USER CODE BEGIN EXTI11_IRQn 1 */
-
-  /* USER CODE END EXTI11_IRQn 1 */
-}
-
-/**
-  * @brief This function handles EXTI Line12 interrupt.
-  */
-void EXTI12_IRQHandler(void)
-{
-  /* USER CODE BEGIN EXTI12_IRQn 0 */
-
-  /* USER CODE END EXTI12_IRQn 0 */
-  HAL_GPIO_EXTI_IRQHandler(LIM2_2_Pin);
-  /* USER CODE BEGIN EXTI12_IRQn 1 */
-
-  /* USER CODE END EXTI12_IRQn 1 */
-}
-
-/**
-  * @brief This function handles EXTI Line14 interrupt.
-  */
-void EXTI14_IRQHandler(void)
-{
-  /* USER CODE BEGIN EXTI14_IRQn 0 */
-
-  /* USER CODE END EXTI14_IRQn 0 */
-  HAL_GPIO_EXTI_IRQHandler(LIM1_1_Pin);
-  /* USER CODE BEGIN EXTI14_IRQn 1 */
-
-  /* USER CODE END EXTI14_IRQn 1 */
-}
-
-/**
-  * @brief This function handles EXTI Line15 interrupt.
-  */
-void EXTI15_IRQHandler(void)
-{
-  /* USER CODE BEGIN EXTI15_IRQn 0 */
-
-  /* USER CODE END EXTI15_IRQn 0 */
-  HAL_GPIO_EXTI_IRQHandler(LIM1_2_Pin);
-  /* USER CODE BEGIN EXTI15_IRQn 1 */
-
-  /* USER CODE END EXTI15_IRQn 1 */
-}
-
-/**
   * @brief This function handles FDCAN1 interrupt 0.
   */
 void FDCAN1_IT0_IRQHandler(void)
@@ -340,20 +212,6 @@ void FDCAN1_IT0_IRQHandler(void)
   /* USER CODE BEGIN FDCAN1_IT0_IRQn 1 */
 
   /* USER CODE END FDCAN1_IT0_IRQn 1 */
-}
-
-/**
-  * @brief This function handles TIM4 global interrupt.
-  */
-void TIM4_IRQHandler(void)
-{
-  /* USER CODE BEGIN TIM4_IRQn 0 */
-
-  /* USER CODE END TIM4_IRQn 0 */
-  HAL_TIM_IRQHandler(&htim4);
-  /* USER CODE BEGIN TIM4_IRQn 1 */
-
-  /* USER CODE END TIM4_IRQn 1 */
 }
 
 /**

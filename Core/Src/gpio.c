@@ -34,7 +34,6 @@
 
 /** Configure pins
      PA13(JTMS/SWDIO)   ------> DEBUG_JTMS-SWDIO
-     PA14(JTCK/SWCLK)   ------> DEBUG_JTCK-SWCLK
 */
 void MX_GPIO_Init(void)
 {
@@ -91,6 +90,14 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
+  /*Configure GPIO pin : PA13 */
+  GPIO_InitStruct.Pin = GPIO_PIN_13;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Alternate = GPIO_AF0_TRACE;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
   /*Configure GPIO pin : ID_4_SW_Pin */
   GPIO_InitStruct.Pin = ID_4_SW_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
@@ -108,31 +115,6 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(POWER_MONITOR_GPIO_Port, &GPIO_InitStruct);
-
-  /* EXTI interrupt init*/
-  HAL_NVIC_SetPriority(EXTI4_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(EXTI4_IRQn);
-
-  HAL_NVIC_SetPriority(EXTI8_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(EXTI8_IRQn);
-
-  HAL_NVIC_SetPriority(EXTI9_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(EXTI9_IRQn);
-
-  HAL_NVIC_SetPriority(EXTI10_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(EXTI10_IRQn);
-
-  HAL_NVIC_SetPriority(EXTI11_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(EXTI11_IRQn);
-
-  HAL_NVIC_SetPriority(EXTI12_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(EXTI12_IRQn);
-
-  HAL_NVIC_SetPriority(EXTI14_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(EXTI14_IRQn);
-
-  HAL_NVIC_SetPriority(EXTI15_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(EXTI15_IRQn);
 
 }
 
