@@ -43,7 +43,12 @@ bool FDCANDriver::send(const FDCANFrame& frame)
     tx_header.TxEventFifoControl  = FDCAN_NO_TX_EVENTS;
     tx_header.MessageMarker       = 0;
 
-    while (HAL_FDCAN_GetTxFifoFreeLevel(hfdcan_) == 0);
+    uint32_t start_tick = HAL_GetTick();
+    while (HAL_FDCAN_GetTxFifoFreeLevel(hfdcan_) == 0) {
+        if (HAL_GetTick() - start_tick > TX_FIFO_TIMEOUT) {
+            return false;
+        }
+    }
 
     if (HAL_FDCAN_AddMessageToTxFifoQ(hfdcan_, &tx_header, const_cast<uint8_t*>(frame.data.data())) != HAL_OK) {
         return false;
@@ -63,35 +68,25 @@ bool FDCANDriver::receive(FDCANFrame& out_frame)
     out_frame.id          = rx_header.Identifier;
     out_frame.is_extended = (rx_header.IdType == FDCAN_EXTENDED_ID);
 
-    // --- ここから修正 ---
-    // DLCコードを実際のバイト数に変換するヘルパー関数（HALに用意されています）
     uint32_t byte_len = 0;
 
-    // HALによっては FDCAN_ConvertDataLength() という関数が使えます
-    // もしくは、以下のような単純な switch/if 文で変換が必要です
     if (rx_header.DataLength <= FDCAN_DLC_BYTES_8) {
         byte_len = rx_header.DataLength;
     } else {
-        // FDCAN特有のDLC変換（例: 0x9 -> 12, 0xA -> 16...）
-        // HALの定義値を使ってバイト数を取得
         byte_len = convert_dlc_to_bytes(rx_header.DataLength);
     }
 
     out_frame.dlc = static_cast<uint8_t>(byte_len);
 
-    // パケットサイズが16バイト（Jetsonのパディング後）であっても、
-    // 自作構造体のサイズ（14バイト）を超えないようにガードをかける
     uint8_t copy_len = std::min<uint8_t>(out_frame.dlc, 64);
 
     for (uint8_t i = 0; i < copy_len; ++i) {
         out_frame.data[i] = rx_data[i];
     }
-    // -------------------
 
     return true;
 }
 
-// 補足：DLCを変換する関数の例
 uint32_t FDCANDriver::convert_dlc_to_bytes(uint32_t dlc)
 {
     switch (dlc) {
