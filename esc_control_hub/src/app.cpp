@@ -44,27 +44,14 @@ void update_heartbeat_led()
         HAL_GPIO_TogglePin(LED_1_GPIO_Port, LED_1_Pin);
     }
 }
-/**
- * @brief Get the device id by dip switch object
- *
- * @return uint8_t device_id
- */
-uint8_t get_device_id_by_dip_switch()
-{
-    uint8_t device_id = 0;
-    if (HAL_GPIO_ReadPin(ID_2_SW_GPIO_Port, ID_2_SW_Pin)) device_id |= 0b1;
-    if (HAL_GPIO_ReadPin(ID_4_SW_GPIO_Port, ID_4_SW_Pin)) device_id |= 0b10;
-    return device_id;
-}
+
 // CAN Drivers
 gn10_can::drivers::FDCANDriver fdcan1_driver(&hfdcan1);
 gn10_can::drivers::CANDriver can2_driver(&hfdcan2);
 // CAN Bus
 gn10_can::FDCANBus fdcan1_bus(fdcan1_driver);
 // CAN Devices
-alignas(gn10_can::devices::ESCHubServer) static unsigned char server_storage[sizeof(gn10_can::devices::ESCHubServer)];
-gn10_can::devices::ESCHubServer* server = nullptr;
-// C620 / C610
+gn10_can::devices::ESCHubServer server(fdcan1_bus, 1);
 c6x0_can::C6XCAN c6x0(can2_driver);
 
 }  // namespace
@@ -74,11 +61,6 @@ c6x0_can::C6XCAN c6x0(can2_driver);
  */
 void setup()
 {
-    // Get device id
-    const uint8_t device_id = get_device_id_by_dip_switch();
-
-    server = new (server_storage) gn10_can::devices::ESCHubServer(fdcan1_bus, device_id);
-
     for (uint8_t i = 0; i < 4; i++) {
         pid_config[i].output_limit    = 20.0f;
         pid_config[i].integral_limit  = 1.0f;
@@ -107,14 +89,14 @@ void loop()
     // server.set_angular_velocity_feedbacks(feedbacks);
     // Update targets
     const uint32_t now_ms = HAL_GetTick();
-    if (server != nullptr && server->get_angular_velocities(targets)) {
+    if (server.get_angular_velocities(targets)) {
         target_last_update_time_ms = now_ms;
         HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, GPIO_PIN_SET);
     }
     // Update parameters by client and calculate PID
     for (uint8_t i = 0; i < 4; i++) {
         // Update configuration
-        if (server != nullptr && server->get_init(i, motor_configres[i])) {
+        if (server.get_init(i, motor_configres[i])) {
             HAL_GPIO_WritePin(LED_4_GPIO_Port, LED_4_Pin, GPIO_PIN_SET);
             float max_current = 0.0f;
             switch (motor_configres[i].get_motor_type()) {
@@ -137,7 +119,7 @@ void loop()
         }
         // Update gains
         float ff_gain;
-        if (server != nullptr && server->get_gains(i, pid_config[i].kp, pid_config[i].ki, pid_config[i].kd, ff_gain)) {
+        if (server.get_gains(i, pid_config[i].kp, pid_config[i].ki, pid_config[i].kd, ff_gain)) {
             pid[i].set_config(pid_config[i]);
             HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, GPIO_PIN_SET);
         }
