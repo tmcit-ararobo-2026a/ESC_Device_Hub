@@ -17,6 +17,7 @@
 
 namespace {
 
+constexpr float ENCODER_SAMPLING_PERIOD           = 0.001f;
 constexpr uint32_t k_heartbeat_toggle_interval_ms = 500;
 constexpr uint32_t k_target_last_update_time_ms   = 500;
 
@@ -111,18 +112,8 @@ void loop()
     float currents[4] = {0.0f, 0.0f, 0.0f, 0.0f};  // [A]
     // Update feedbacks
     for (uint8_t i = 0; i < 4; i++) {
-        switch (motor_configres[i].get_encoder_type()) {
-            case gn10_can::devices::EncoderType::None:
-                feedbacks[i] = 2 * M_PI * float(c6x0.get_feedback_speed(i)) / 60.0f;
-                break;
-            case gn10_can::devices::EncoderType::IncrementalSpeed:
-                feedbacks[i] = encoders[i].count_to_angular_velocity(encoders[i].read_and_reset_count(), 0.001f);
-                break;
-            case gn10_can::devices::EncoderType::IncrementalTotal:
-                feedbacks[i] = encoders[i].accumulate_angle_rad(encoders[i].read_and_reset_count());
-                break;
-            default:
-                break;
+        if (motor_configres[i].get_encoder_type() == gn10_can::devices::EncoderType::None) {
+            feedbacks[i] = 2 * M_PI * float(c6x0.get_feedback_speed(i)) / 60.0f;
         }
     }
     // server.set_angular_velocity_feedbacks(feedbacks);
@@ -196,6 +187,25 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef* hfdcan, uint32_t RxFifo0ITs)
         fdcan1_bus.update();
     } else {
         c6x0.update();
+    }
+}
+
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
+{
+    if (htim->Instance == htim6.Instance) {  // 1kHz timer
+        // Update feedbacks
+        for (uint8_t i = 0; i < 4; i++) {
+            switch (motor_configres[i].get_encoder_type()) {
+                case gn10_can::devices::EncoderType::IncrementalSpeed:
+                    feedbacks[i] = encoders[i].count_to_angular_velocity(encoders[i].read_and_reset_count(), ENCODER_SAMPLING_PERIOD);
+                    break;
+                case gn10_can::devices::EncoderType::IncrementalTotal:
+                    feedbacks[i] = encoders[i].accumulate_angle_rad(encoders[i].read_and_reset_count());
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }
 }
