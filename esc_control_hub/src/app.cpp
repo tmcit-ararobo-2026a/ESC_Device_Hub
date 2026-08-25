@@ -88,8 +88,12 @@ void setup()
     server = new (server_storage) gn10_can::devices::ESCHubServer(fdcan1_bus, device_id);
 
     for (uint8_t i = 0; i < 4; i++) {
-        pid_config[i].output_limit    = 20.0f;
-        pid_config[i].integral_limit  = 1.0f;
+        pid_config[i].output_limit   = 20.0f;
+        pid_config[i].integral_limit = 1.0f;
+        pid_config[i].kp             = 0.0f;
+        pid_config[i].ki             = 0.0f;
+        pid_config[i].kd             = 0.0f;
+        pid[i].set_config(pid_config[i]);
         current_to_data_conversion[i] = c6x0_can::C620_CURRENT_CONVERSION;
         encoders[i].hardware_init();
     }
