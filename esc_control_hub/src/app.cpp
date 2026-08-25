@@ -107,7 +107,7 @@ void loop()
     // server.set_angular_velocity_feedbacks(feedbacks);
     // Update targets
     const uint32_t now_ms = HAL_GetTick();
-    if (server != nullptr && server->get_angular_velocities(targets)) {
+    if (server != nullptr && server->get_targets(targets)) {
         target_last_update_time_ms = now_ms;
         HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, GPIO_PIN_SET);
     }
