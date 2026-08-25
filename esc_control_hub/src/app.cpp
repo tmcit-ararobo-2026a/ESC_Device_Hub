@@ -20,13 +20,14 @@ namespace {
 constexpr float MOTOR_CONTROL_PERIOD              = 0.001f;
 constexpr uint32_t k_heartbeat_toggle_interval_ms = 500;
 constexpr uint32_t k_target_last_update_time_ms   = 500;
+volatile bool timer_triggered                     = false;
+volatile float feedbacks[4];
 
 uint32_t heartbeat_last_toggle_time_ms = 0;
 uint32_t target_last_update_time_ms    = 0;
-float feedbacks[4];
-constexpr float max_current_c610    = 10.0f;
-constexpr float max_current_c620    = 20.0f;
-float current_to_data_conversion[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+constexpr float max_current_c610       = 10.0f;
+constexpr float max_current_c620       = 20.0f;
+float current_to_data_conversion[4]    = {0.0f, 0.0f, 0.0f, 0.0f};
 // Configuration
 gn10_motor::PIDConfig<float> pid_config[4];
 gn10_can::devices::MotorConfig motor_configres[4];
@@ -75,42 +76,8 @@ gn10_motor::IncrementalEncoder encoders[4] = {
     gn10_motor::IncrementalEncoder(4095, &htim3, TIM3),
     gn10_motor::IncrementalEncoder(4095, &htim4, TIM4)
 };
-}  // namespace
 
-/**
- * @brief Initialize CAN and mainboard application state.
- */
-void setup()
-{
-    // Get device id
-    const uint8_t device_id = get_device_id_by_dip_switch();
-
-    server = new (server_storage) gn10_can::devices::ESCHubServer(fdcan1_bus, device_id);
-
-    for (uint8_t i = 0; i < 4; i++) {
-        pid_config[i].output_limit   = 20.0f;
-        pid_config[i].integral_limit = 1.0f;
-        pid_config[i].kp             = 0.0f;
-        pid_config[i].ki             = 0.0f;
-        pid_config[i].kd             = 0.0f;
-        pid[i].set_config(pid_config[i]);
-        current_to_data_conversion[i] = c6x0_can::C620_CURRENT_CONVERSION;
-        encoders[i].hardware_init();
-    }
-
-    // CAN initialization
-    fdcan1_driver.init();
-    can2_driver.init();
-    // Encoder initialization
-    // System setup
-    heartbeat_last_toggle_time_ms = HAL_GetTick();
-    target_last_update_time_ms    = HAL_GetTick();
-}
-
-/**
- * @brief Run one control cycle and update status heartbeat LED.
- */
-void loop()
+void control_motors()
 {
     float targets[4]  = {0.0f, 0.0f, 0.0f, 0.0f};
     float currents[4] = {0.0f, 0.0f, 0.0f, 0.0f};  // [A]
@@ -175,10 +142,50 @@ void loop()
     }
     // Send Currents
     c6x0.set_currents_1_4(current_data);
+}
+}  // namespace
 
-    // Basic System Process
-    update_heartbeat_led();
-    HAL_Delay(1);
+/**
+ * @brief Initialize CAN and mainboard application state.
+ */
+void setup()
+{
+    // Get device id
+    const uint8_t device_id = get_device_id_by_dip_switch();
+
+    server = new (server_storage) gn10_can::devices::ESCHubServer(fdcan1_bus, device_id);
+
+    for (uint8_t i = 0; i < 4; i++) {
+        pid_config[i].output_limit   = 20.0f;
+        pid_config[i].integral_limit = 1.0f;
+        pid_config[i].kp             = 0.0f;
+        pid_config[i].ki             = 0.0f;
+        pid_config[i].kd             = 0.0f;
+        pid[i].set_config(pid_config[i]);
+        current_to_data_conversion[i] = c6x0_can::C620_CURRENT_CONVERSION;
+        encoders[i].hardware_init();
+    }
+
+    // CAN initialization
+    fdcan1_driver.init();
+    can2_driver.init();
+    // Encoder initialization
+    // System setup
+    heartbeat_last_toggle_time_ms = HAL_GetTick();
+    target_last_update_time_ms    = HAL_GetTick();
+}
+
+/**
+ * @brief Run one control cycle and update status heartbeat LED.
+ */
+void loop()
+{
+    if (timer_triggered) {
+        timer_triggered = false;
+        control_motors();
+        // Basic System Process
+        update_heartbeat_led();
+    }
 }
 
 // ---------------------------- C language's functions override ----------------------------------
@@ -211,6 +218,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
                     break;
             }
         }
+        timer_triggered = true;
     }
 }
 }
