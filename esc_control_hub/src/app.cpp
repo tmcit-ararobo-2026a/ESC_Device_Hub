@@ -152,7 +152,7 @@ void loop()
     // Safety guard
     if ((now_ms - target_last_update_time_ms) > k_target_last_update_time_ms) {
         for (uint8_t i = 0; i < 4; i++) {
-            current_data[0] = 0;
+            current_data[i] = 0;
         }
     }
     // Send Currents
