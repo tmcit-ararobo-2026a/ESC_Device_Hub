@@ -169,7 +169,6 @@ void setup()
     // CAN initialization
     fdcan1_driver.init();
     can2_driver.init();
-    // Encoder initialization
     // System setup
     heartbeat_last_toggle_time_ms = HAL_GetTick();
     target_last_update_time_ms    = HAL_GetTick();
