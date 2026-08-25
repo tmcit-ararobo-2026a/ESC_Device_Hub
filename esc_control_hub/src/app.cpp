@@ -160,7 +160,7 @@ void loop()
     // Currents to Integer
     int16_t current_data[4];
     for (uint8_t i = 0; i < 4; i++) {
-        current_data[i] = int16_t(currents[i] * c6x0_can::C620_CURRENT_CONVERSION);
+        current_data[i] = int16_t(currents[i] * current_to_data_conversion[i]);
     }
     // Safety guard
     if ((now_ms - target_last_update_time_ms) > k_target_last_update_time_ms) {
