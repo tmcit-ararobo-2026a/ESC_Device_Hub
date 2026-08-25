@@ -17,7 +17,7 @@
 
 namespace {
 
-constexpr float ENCODER_SAMPLING_PERIOD           = 0.001f;
+constexpr float MOTOR_CONTROL_PERIOD              = 0.001f;
 constexpr uint32_t k_heartbeat_toggle_interval_ms = 500;
 constexpr uint32_t k_target_last_update_time_ms   = 500;
 
@@ -151,6 +151,7 @@ void loop()
             }
             pid_config[i].output_limit = max_current;
             encoders[i].reset();
+            pid[i].set_config(pid_config[i]);
         }
         // Update gains
         float ff_gain;
@@ -159,7 +160,7 @@ void loop()
             HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, GPIO_PIN_SET);
         }
         // calculate PID
-        currents[i] = pid[i].update(targets[i], feedbacks[i], 0.001f);
+        currents[i] = pid[i].update(targets[i], feedbacks[i], MOTOR_CONTROL_PERIOD);
     }
     // Currents to Integer
     int16_t current_data[4];
@@ -201,7 +202,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
         for (uint8_t i = 0; i < 4; i++) {
             switch (motor_configres[i].get_encoder_type()) {
                 case gn10_can::devices::EncoderType::IncrementalSpeed:
-                    feedbacks[i] = encoders[i].count_to_angular_velocity(encoders[i].read_and_reset_count(), ENCODER_SAMPLING_PERIOD);
+                    feedbacks[i] = encoders[i].count_to_angular_velocity(encoders[i].read_and_reset_count(), MOTOR_CONTROL_PERIOD);
                     break;
                 case gn10_can::devices::EncoderType::IncrementalTotal:
                     feedbacks[i] = encoders[i].accumulate_angle_rad(encoders[i].read_and_reset_count());
