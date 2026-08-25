@@ -47,7 +47,7 @@ public:
      * @return true 送信成功
      * @return false 送信失敗
      */
-    bool set_currents_1_3(int16_t currents[4]);
+    bool set_currents_1_4(int16_t currents[4]);
 
     /**
      * @brief 電流値設定
@@ -56,7 +56,7 @@ public:
      * @return true 送信成功
      * @return false 送信失敗
      */
-    bool set_currents_4_7(int16_t currents[4]);
+    bool set_currents_5_8(int16_t currents[4]);
 
     /**
      * @brief feedbackのangleを読み取るgetter関数。

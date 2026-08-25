@@ -24,7 +24,7 @@ void C6XCAN::update()
     feedback_[motor_number].temperature = received_feedback.temperature;
 }
 
-bool C6XCAN::set_currents_1_3(int16_t currents[4])
+bool C6XCAN::set_currents_1_4(int16_t currents[4])
 {
     std::array<uint8_t, 8> data;
     uint16_t current_data[4];
@@ -40,7 +40,7 @@ bool C6XCAN::set_currents_1_3(int16_t currents[4])
     return can_driver_.send(frame);
 }
 
-bool C6XCAN::set_currents_4_7(int16_t currents[4])
+bool C6XCAN::set_currents_5_8(int16_t currents[4])
 {
     std::array<uint8_t, 8> data;
     uint16_t current_data[4];
