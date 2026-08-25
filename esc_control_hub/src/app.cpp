@@ -11,11 +11,13 @@
 #include "esc_control_hub/c6x_can.hpp"
 #include "esc_control_hub/can_driver.hpp"
 #include "esc_control_hub/fdcan_driver.hpp"
+#include "esc_control_hub/incremental_encoder.hpp"
 #include "esc_control_hub/pid.hpp"
 // others
 
 namespace {
 
+constexpr float ENCODER_SAMPLING_PERIOD           = 0.001f;
 constexpr uint32_t k_heartbeat_toggle_interval_ms = 500;
 constexpr uint32_t k_target_last_update_time_ms   = 500;
 
@@ -66,7 +68,13 @@ alignas(gn10_can::devices::ESCHubServer) static unsigned char server_storage[siz
 gn10_can::devices::ESCHubServer* server = nullptr;
 // C620 / C610
 c6x0_can::C6XCAN c6x0(can2_driver);
-
+// Encoder
+gn10_motor::IncrementalEncoder encoders[4] = {
+    gn10_motor::IncrementalEncoder(4095, &htim8, TIM8),
+    gn10_motor::IncrementalEncoder(4095, &htim1, TIM1),
+    gn10_motor::IncrementalEncoder(4095, &htim3, TIM3),
+    gn10_motor::IncrementalEncoder(4095, &htim4, TIM4)
+};
 }  // namespace
 
 /**
@@ -83,11 +91,13 @@ void setup()
         pid_config[i].output_limit    = 20.0f;
         pid_config[i].integral_limit  = 1.0f;
         current_to_data_conversion[i] = c6x0_can::C620_CURRENT_CONVERSION;
+        encoders[i].hardware_init();
     }
 
     // CAN initialization
     fdcan1_driver.init();
     can2_driver.init();
+    // Encoder initialization
     // System setup
     heartbeat_last_toggle_time_ms = HAL_GetTick();
     target_last_update_time_ms    = HAL_GetTick();
@@ -102,12 +112,14 @@ void loop()
     float currents[4] = {0.0f, 0.0f, 0.0f, 0.0f};  // [A]
     // Update feedbacks
     for (uint8_t i = 0; i < 4; i++) {
-        feedbacks[i] = 2 * M_PI * float(c6x0.get_feedback_speed(i)) / 60.0f;
+        if (motor_configres[i].get_encoder_type() == gn10_can::devices::EncoderType::None) {
+            feedbacks[i] = 2 * M_PI * float(c6x0.get_feedback_speed(i)) / 60.0f;
+        }
     }
     // server.set_angular_velocity_feedbacks(feedbacks);
     // Update targets
     const uint32_t now_ms = HAL_GetTick();
-    if (server != nullptr && server->get_angular_velocities(targets)) {
+    if (server != nullptr && server->get_targets(targets)) {
         target_last_update_time_ms = now_ms;
         HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, GPIO_PIN_SET);
     }
@@ -134,6 +146,7 @@ void loop()
                     break;
             }
             pid_config[i].output_limit = max_current;
+            encoders[i].reset();
         }
         // Update gains
         float ff_gain;
@@ -174,6 +187,25 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef* hfdcan, uint32_t RxFifo0ITs)
         fdcan1_bus.update();
     } else {
         c6x0.update();
+    }
+}
+
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
+{
+    if (htim->Instance == htim6.Instance) {  // 1kHz timer
+        // Update feedbacks
+        for (uint8_t i = 0; i < 4; i++) {
+            switch (motor_configres[i].get_encoder_type()) {
+                case gn10_can::devices::EncoderType::IncrementalSpeed:
+                    feedbacks[i] = encoders[i].count_to_angular_velocity(encoders[i].read_and_reset_count(), ENCODER_SAMPLING_PERIOD);
+                    break;
+                case gn10_can::devices::EncoderType::IncrementalTotal:
+                    feedbacks[i] = encoders[i].accumulate_angle_rad(encoders[i].read_and_reset_count());
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }
 }

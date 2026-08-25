@@ -5,6 +5,7 @@ add_library(esc_control_hub STATIC
     src/fdcan_driver.cpp
     src/can_driver.cpp
     src/c6x_can.cpp
+    src/incremental_encoder.cpp
 )
 
 target_include_directories(esc_control_hub PUBLIC
