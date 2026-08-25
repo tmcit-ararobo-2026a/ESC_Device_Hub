@@ -169,7 +169,7 @@ void loop()
         }
     }
     // Send Currents
-    c6x0.set_currents_1_3(current_data);
+    c6x0.set_currents_1_4(current_data);
 
     // Basic System Process
     update_heartbeat_led();
