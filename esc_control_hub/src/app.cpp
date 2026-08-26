@@ -20,14 +20,18 @@ namespace {
 constexpr float MOTOR_CONTROL_PERIOD              = 0.001f;
 constexpr uint32_t k_heartbeat_toggle_interval_ms = 500;
 constexpr uint32_t k_target_last_update_time_ms   = 500;
-volatile bool timer_triggered                     = false;
+constexpr uint32_t k_send_anglar_data_interval_ms = 10;
+
+volatile bool timer_triggered = false;
 volatile float feedbacks[4];
 
 uint32_t heartbeat_last_toggle_time_ms = 0;
 uint32_t target_last_update_time_ms    = 0;
-constexpr float max_current_c610       = 10.0f;
-constexpr float max_current_c620       = 20.0f;
-float current_to_data_conversion[4]    = {0.0f, 0.0f, 0.0f, 0.0f};
+uint32_t send_anglar_data_last_time_ms = 0;
+
+constexpr float max_current_c610    = 10.0f;
+constexpr float max_current_c620    = 20.0f;
+float current_to_data_conversion[4] = {0.0f, 0.0f, 0.0f, 0.0f};
 // Configuration
 gn10_motor::PIDConfig<float> pid_config[4];
 gn10_can::devices::MotorConfig motor_configres[4];
@@ -80,6 +84,16 @@ gn10_motor::IncrementalEncoder encoders[4] = {
     gn10_motor::IncrementalEncoder(4095, &htim4, TIM4)
 };
 
+void send_feedback_data(float feedback_data[4])
+{
+    const uint32_t now_ms = HAL_GetTick();
+    if ((now_ms - send_anglar_data_last_time_ms) >= k_send_anglar_data_interval_ms) {
+        send_anglar_data_last_time_ms = now_ms;
+        server->set_feedbacks(feedback_data);
+        HAL_GPIO_TogglePin(LED_2_GPIO_Port, LED_2_Pin);
+    }
+}
+
 void control_motors()
 {
     // Update feedbacks
@@ -88,7 +102,7 @@ void control_motors()
             feedbacks[i] = 2 * M_PI * float(c6x0.get_feedback_speed(i)) / 60.0f;
         }
     }
-    // server->set_feedbacks(const_cast<float*>(feedbacks));
+    send_feedback_data(const_cast<float*>(feedbacks));
     const uint32_t now_ms = HAL_GetTick();
     if (server != nullptr && server->get_targets(targets)) {
         target_last_update_time_ms = now_ms;
@@ -143,6 +157,7 @@ void control_motors()
     // Send Currents
     c6x0.set_currents_1_4(current_data);
 }
+
 }  // namespace
 
 /**
