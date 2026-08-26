@@ -87,8 +87,7 @@ void control_motors()
             feedbacks[i] = 2 * M_PI * float(c6x0.get_feedback_speed(i)) / 60.0f;
         }
     }
-    // server.set_angular_velocity_feedbacks(feedbacks);
-    // Update targets
+    server->set_feedbacks(const_cast<float*>(feedbacks));
     const uint32_t now_ms = HAL_GetTick();
     if (server != nullptr && server->get_targets(targets)) {
         target_last_update_time_ms = now_ms;
