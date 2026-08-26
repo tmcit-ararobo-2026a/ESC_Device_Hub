@@ -36,6 +36,9 @@ gn10_motor::PID<float> pid[4]{
     gn10_motor::PID(pid_config[0]), gn10_motor::PID(pid_config[1]), gn10_motor::PID(pid_config[2]), gn10_motor::PID(pid_config[3])
 };
 
+float targets[4]  = {0.0f, 0.0f, 0.0f, 0.0f};
+float currents[4] = {0.0f, 0.0f, 0.0f, 0.0f};  // [A]
+
 /**
  * @brief Toggle heartbeat LED at a fixed interval.
  */
@@ -79,15 +82,13 @@ gn10_motor::IncrementalEncoder encoders[4] = {
 
 void control_motors()
 {
-    float targets[4]  = {0.0f, 0.0f, 0.0f, 0.0f};
-    float currents[4] = {0.0f, 0.0f, 0.0f, 0.0f};  // [A]
     // Update feedbacks
     for (uint8_t i = 0; i < 4; i++) {
         if (motor_configres[i].get_encoder_type() == gn10_can::devices::EncoderType::None) {
             feedbacks[i] = 2 * M_PI * float(c6x0.get_feedback_speed(i)) / 60.0f;
         }
     }
-    server->set_feedbacks(const_cast<float*>(feedbacks));
+    // server->set_feedbacks(const_cast<float*>(feedbacks));
     const uint32_t now_ms = HAL_GetTick();
     if (server != nullptr && server->get_targets(targets)) {
         target_last_update_time_ms = now_ms;
