@@ -29,8 +29,8 @@ uint32_t heartbeat_last_toggle_time_ms = 0;
 uint32_t target_last_update_time_ms    = 0;
 uint32_t send_anglar_data_last_time_ms = 0;
 
-constexpr float max_current_c610    = 10.0f;
-constexpr float max_current_c620    = 20.0f;
+constexpr float max_current_c610 = 10.0f;
+constexpr float max_current_c620 = 20.0f;
 // Configuration
 gn10_motor::PIDConfig<float> pid_config[4];
 gn10_can::devices::MotorConfig motor_configres[4];
@@ -101,7 +101,6 @@ void control_motors()
             feedbacks[i] = 2 * M_PI * float(c6x0.get_feedback_speed(i)) / 60.0f;
         }
     }
-    send_feedback_data(const_cast<float*>(feedbacks));
     const uint32_t now_ms = HAL_GetTick();
     if (server != nullptr && server->get_targets(targets)) {
         target_last_update_time_ms = now_ms;
@@ -188,6 +187,8 @@ void loop()
     if (timer_triggered) {
         timer_triggered = false;
         control_motors();
+        float feedback_data[4] = {feedbacks[0], feedbacks[1], feedbacks[2], feedbacks[3]};
+        send_feedback_data(feedback_data);
         // Basic System Process
         update_heartbeat_led();
     }
