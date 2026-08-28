@@ -29,9 +29,8 @@ uint32_t heartbeat_last_toggle_time_ms = 0;
 uint32_t target_last_update_time_ms    = 0;
 uint32_t send_anglar_data_last_time_ms = 0;
 
-constexpr float max_current_c610    = 10.0f;
-constexpr float max_current_c620    = 20.0f;
-float current_to_data_conversion[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+constexpr float max_current_c610 = 10.0f;
+constexpr float max_current_c620 = 20.0f;
 // Configuration
 gn10_motor::PIDConfig<float> pid_config[4];
 gn10_can::devices::MotorConfig motor_configres[4];
@@ -102,7 +101,6 @@ void control_motors()
             feedbacks[i] = 2 * M_PI * float(c6x0.get_feedback_speed(i)) / 60.0f;
         }
     }
-    send_feedback_data(const_cast<float*>(feedbacks));
     const uint32_t now_ms = HAL_GetTick();
     if (server != nullptr && server->get_targets(targets)) {
         target_last_update_time_ms = now_ms;
@@ -113,26 +111,23 @@ void control_motors()
         // Update configuration
         if (server != nullptr && server->get_init(i, motor_configres[i])) {
             HAL_GPIO_WritePin(LED_4_GPIO_Port, LED_4_Pin, GPIO_PIN_SET);
-            float max_current = 0.0f;
+            float current_limit = 0.0f;
             switch (motor_configres[i].get_motor_type()) {
                 case gn10_can::devices::MotorType::C610:
-                    max_current                   = max_current_c610;
-                    current_to_data_conversion[i] = c6x0_can::C610_CURRENT_CONVERSION;
+                    current_limit = max_current_c610;
                     break;
 
                 case gn10_can::devices::MotorType::C620:
-                    max_current                   = max_current_c620;
-                    current_to_data_conversion[i] = c6x0_can::C620_CURRENT_CONVERSION;
+                    current_limit = max_current_c620;
                     break;
 
                 default:
-                    max_current                   = max_current_c620;
-                    current_to_data_conversion[i] = c6x0_can::C620_CURRENT_CONVERSION;
                     break;
             }
-            pid_config[i].output_limit = max_current;
+            pid_config[i].output_limit = current_limit;
             encoders[i].reset();
             pid[i].set_config(pid_config[i]);
+            c6x0.set_moter_type(i, motor_configres[i].get_motor_type());
         }
         // Update gains
         float ff_gain;
@@ -143,19 +138,14 @@ void control_motors()
         // calculate PID
         currents[i] = pid[i].update(targets[i], feedbacks[i], MOTOR_CONTROL_PERIOD);
     }
-    // Currents to Integer
-    int16_t current_data[4];
-    for (uint8_t i = 0; i < 4; i++) {
-        current_data[i] = int16_t(currents[i] * current_to_data_conversion[i]);
-    }
     // Safety guard
     if ((now_ms - target_last_update_time_ms) > k_target_last_update_time_ms) {
         for (uint8_t i = 0; i < 4; i++) {
-            current_data[i] = 0;
+            currents[i] = 0.0f;
         }
     }
     // Send Currents
-    c6x0.set_currents_1_4(current_data);
+    c6x0.set_currents_1_4(currents);
 }
 
 }  // namespace
@@ -177,7 +167,6 @@ void setup()
         pid_config[i].ki             = 0.0f;
         pid_config[i].kd             = 0.0f;
         pid[i].set_config(pid_config[i]);
-        current_to_data_conversion[i] = c6x0_can::C620_CURRENT_CONVERSION;
         encoders[i].hardware_init();
     }
 
@@ -198,6 +187,8 @@ void loop()
     if (timer_triggered) {
         timer_triggered = false;
         control_motors();
+        float feedback_data[4] = {feedbacks[0], feedbacks[1], feedbacks[2], feedbacks[3]};
+        send_feedback_data(feedback_data);
         // Basic System Process
         update_heartbeat_led();
     }

@@ -1,9 +1,13 @@
 #pragma once
 #include <cstdint>
 
+#include "gn10_can/devices/motor_driver_types.hpp"
 #include "gn10_can/drivers/can_driver_interface.hpp"
 
 namespace c6x0_can {
+
+constexpr int C620_MAX_CURRENT_ABS = 16384;
+constexpr int C610_MAX_CURRENT_ABS = 10000;
 
 // M2006　M3508の制御フレーム（送信）
 constexpr int SEND_CANID_0_3 = 0x200;
@@ -29,10 +33,14 @@ class C6XCAN
 private:
     gn10_can::drivers::ICANDriver& can_driver_;
     C620Feedback feedback_[8];
+    float current_to_data_conversion_[8] = {0.0f, 0.0f, 0.0f, 0.0f};
+    int max_currents_abs_[8]             = {0, 0, 0, 0};
 
 public:
     // コンストラクタ
     C6XCAN(gn10_can::drivers::ICANDriver& can_driver) : can_driver_(can_driver) {}
+
+    void set_moter_type(int motor_index, gn10_can::devices::MotorType motor_type);
 
     /**
      * @brief CAN Callback
@@ -43,20 +51,20 @@ public:
     /**
      * @brief 電流値設定
      *
-     * @param currents 電流値
+     * @param currents 電流値[A]
      * @return true 送信成功
      * @return false 送信失敗
      */
-    bool set_currents_1_4(int16_t currents[4]);
+    bool set_currents_1_4(float currents[4]);
 
     /**
      * @brief 電流値設定
      *
-     * @param currents 電流値
+     * @param currents 電流値[A]
      * @return true 送信成功
      * @return false 送信失敗
      */
-    bool set_currents_5_8(int16_t currents[4]);
+    bool set_currents_5_8(float currents[4]);
 
     /**
      * @brief feedbackのangleを読み取るgetter関数。
