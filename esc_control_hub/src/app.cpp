@@ -201,11 +201,15 @@ extern "C" {
  */
 void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef* hfdcan, uint32_t RxFifo0ITs)
 {
-    if (hfdcan->Instance == hfdcan1.Instance) {
-        fdcan1_bus.update();
-    } else {
-        c6x0.update();
-    }
+    c6x0.update();
+}
+
+/**
+ * @brief Receive callback for FDCAN FIFO1.
+ */
+void HAL_FDCAN_RxFifo1Callback(FDCAN_HandleTypeDef* hfdcan, uint32_t RxFifo1ITs)
+{
+    fdcan1_bus.update();
 }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
