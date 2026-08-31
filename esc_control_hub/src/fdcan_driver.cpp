@@ -50,9 +50,9 @@ bool FDCANDriver::send(const FDCANFrame& frame)
         }
     }
 
-    //  if (HAL_FDCAN_AddMessageToTxFifoQ(hfdcan_, &tx_header, const_cast<uint8_t*>(frame.data.data())) != HAL_OK) {
-    //      return false;
-    //  }
+    if (HAL_FDCAN_AddMessageToTxFifoQ(hfdcan_, &tx_header, const_cast<uint8_t*>(frame.data.data())) != HAL_OK) {
+        return false;
+    }
     return true;
 }
 
