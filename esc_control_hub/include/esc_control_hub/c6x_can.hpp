@@ -6,18 +6,21 @@
 
 namespace c6x0_can {
 
+// 最大電流値の際の送信データ絶対値
 constexpr int C620_MAX_CURRENT_ABS = 16384;
 constexpr int C610_MAX_CURRENT_ABS = 10000;
+// 最大電流[A]
+constexpr int C620_MAX_CURRENT_A = 20;
+constexpr int C610_MAX_CURRENT_A = 10;
 
 // M2006　M3508の制御フレーム（送信）
 constexpr int SEND_CANID_0_3 = 0x200;
 constexpr int SEND_CANID_4_7 = 0x1FF;
 
-// c610電流変換定数
-constexpr float C610_CURRENT_CONVERSION = 100.0f;
-
 // c620電流変換用定数
-constexpr float C620_CURRENT_CONVERSION = 819.2f;
+constexpr float C620_CURRENT_CONVERSION = C620_MAX_CURRENT_ABS / C620_MAX_CURRENT_A;
+// c610電流変換定数
+constexpr float C610_CURRENT_CONVERSION = C610_MAX_CURRENT_ABS / C610_MAX_CURRENT_A;
 
 // feedback data
 struct C620Feedback {
