@@ -216,7 +216,7 @@ void HAL_FDCAN_RxFifo1Callback(FDCAN_HandleTypeDef* hfdcan, uint32_t RxFifo1ITs)
 {
     if (hfdcan->Instance == hfdcan1.Instance) {
         fdcan1_bus.update();
-    } else if (hfdcan->Instance != hfdcan2.Instance) {
+    } else if (hfdcan->Instance == hfdcan2.Instance) {
         c6x0.update();
     }
 }
