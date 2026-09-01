@@ -71,7 +71,7 @@ bool FDCANDriver::receive(FDCANFrame& out_frame)
     out_frame.is_extended = (rx_header.IdType == FDCAN_EXTENDED_ID);
     out_frame.dlc         = (uint8_t)rx_header.DataLength;
 
-    uint8_t copy_len = std::min<uint8_t>(out_frame.dlc, 64);
+    uint8_t copy_len = dlc::dlc_to_data_length(out_frame.dlc);
 
     for (uint8_t i = 0; i < copy_len; ++i) {
         out_frame.data[i] = rx_data[i];
