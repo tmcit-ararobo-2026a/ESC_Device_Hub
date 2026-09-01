@@ -1,5 +1,7 @@
 #include "esc_control_hub/fdcan_driver.hpp"
 
+#include "gn10_can/core/can_dlc.hpp"
+
 namespace gn10_can {
 namespace drivers {
 
@@ -36,7 +38,7 @@ bool FDCANDriver::send(const FDCANFrame& frame)
 
     tx_header.Identifier          = frame.id;
     tx_header.TxFrameType         = FDCAN_DATA_FRAME;
-    tx_header.DataLength          = convert_bytes_to_dlc(frame.dlc);
+    tx_header.DataLength          = (uint32_t)frame.dlc;
     tx_header.ErrorStateIndicator = FDCAN_ESI_ACTIVE;
     tx_header.BitRateSwitch       = FDCAN_BRS_OFF;
     tx_header.FDFormat            = FDCAN_FD_CAN;
@@ -67,16 +69,7 @@ bool FDCANDriver::receive(FDCANFrame& out_frame)
 
     out_frame.id          = rx_header.Identifier;
     out_frame.is_extended = (rx_header.IdType == FDCAN_EXTENDED_ID);
-
-    uint32_t byte_len = 0;
-
-    if (rx_header.DataLength <= FDCAN_DLC_BYTES_8) {
-        byte_len = rx_header.DataLength;
-    } else {
-        byte_len = convert_dlc_to_bytes(rx_header.DataLength);
-    }
-
-    out_frame.dlc = static_cast<uint8_t>(byte_len);
+    out_frame.dlc         = (uint8_t)rx_header.DataLength;
 
     uint8_t copy_len = std::min<uint8_t>(out_frame.dlc, 64);
 
@@ -85,66 +78,6 @@ bool FDCANDriver::receive(FDCANFrame& out_frame)
     }
 
     return true;
-}
-
-uint32_t FDCANDriver::convert_dlc_to_bytes(uint32_t dlc)
-{
-    switch (dlc) {
-        case FDCAN_DLC_BYTES_12:
-            return 12;
-        case FDCAN_DLC_BYTES_16:
-            return 16;
-        case FDCAN_DLC_BYTES_20:
-            return 20;
-        case FDCAN_DLC_BYTES_24:
-            return 24;
-        case FDCAN_DLC_BYTES_32:
-            return 32;
-        case FDCAN_DLC_BYTES_48:
-            return 48;
-        case FDCAN_DLC_BYTES_64:
-            return 64;
-        default:
-            return dlc;  // 8以下はそのまま
-    }
-}
-
-uint32_t FDCANDriver::convert_bytes_to_dlc(uint32_t bytes)
-{
-    switch (bytes) {
-        case 1:
-            return FDCAN_DLC_BYTES_1;
-        case 2:
-            return FDCAN_DLC_BYTES_2;
-        case 3:
-            return FDCAN_DLC_BYTES_3;
-        case 4:
-            return FDCAN_DLC_BYTES_4;
-        case 5:
-            return FDCAN_DLC_BYTES_5;
-        case 6:
-            return FDCAN_DLC_BYTES_6;
-        case 7:
-            return FDCAN_DLC_BYTES_7;
-        case 8:
-            return FDCAN_DLC_BYTES_8;
-        case 12:
-            return FDCAN_DLC_BYTES_12;
-        case 16:
-            return FDCAN_DLC_BYTES_16;
-        case 20:
-            return FDCAN_DLC_BYTES_20;
-        case 24:
-            return FDCAN_DLC_BYTES_24;
-        case 32:
-            return FDCAN_DLC_BYTES_32;
-        case 48:
-            return FDCAN_DLC_BYTES_48;
-        case 64:
-            return FDCAN_DLC_BYTES_64;
-        default:
-            return bytes;  // どれにも当てはまらない場合はそのまま送信
-    }
 }
 
 }  // namespace drivers
