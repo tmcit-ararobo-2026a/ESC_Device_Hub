@@ -19,9 +19,9 @@ bool FDCANDriver::init()
     if (HAL_FDCAN_Start(hfdcan_) != HAL_OK) {
         return false;
     }
-    // if (HAL_FDCAN_ActivateNotification(hfdcan_, FDCAN_IT_RX_FIFO1_NEW_MESSAGE, 0) != HAL_OK) {
-    //     return false;
-    // }
+    if (HAL_FDCAN_ActivateNotification(hfdcan_, FDCAN_IT_RX_FIFO1_NEW_MESSAGE, 0) != HAL_OK) {
+        return false;
+    }
     return true;
 }
 
