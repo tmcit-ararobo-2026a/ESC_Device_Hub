@@ -89,7 +89,6 @@ void send_feedback_data(float feedback_data[4])
     if ((now_ms - send_anglar_data_last_time_ms) >= k_send_anglar_data_interval_ms) {
         send_anglar_data_last_time_ms = now_ms;
         server->set_feedbacks(feedback_data);
-        HAL_GPIO_TogglePin(LED_2_GPIO_Port, LED_2_Pin);
     }
 }
 
@@ -104,7 +103,6 @@ void control_motors()
     const uint32_t now_ms = HAL_GetTick();
     if (server != nullptr && server->get_targets(targets)) {
         target_last_update_time_ms = now_ms;
-        HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, GPIO_PIN_SET);
     }
     // Update parameters by client and calculate PID
     for (uint8_t i = 0; i < 4; i++) {
@@ -133,7 +131,7 @@ void control_motors()
         float ff_gain;
         if (server != nullptr && server->get_gains(i, pid_config[i].kp, pid_config[i].ki, pid_config[i].kd, ff_gain)) {
             pid[i].set_config(pid_config[i]);
-            HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, GPIO_PIN_SET);
+            HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, GPIO_PIN_SET);
         }
         // calculate PID
         currents[i] = pid[i].update(targets[i], feedbacks[i], MOTOR_CONTROL_PERIOD);
@@ -143,6 +141,9 @@ void control_motors()
         for (uint8_t i = 0; i < 4; i++) {
             currents[i] = 0.0f;
         }
+        HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, GPIO_PIN_RESET);
+    } else {
+        HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, GPIO_PIN_RESET);
     }
     // Send Currents
     c6x0.set_currents_1_4(currents);
