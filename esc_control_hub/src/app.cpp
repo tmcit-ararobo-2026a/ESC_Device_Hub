@@ -203,9 +203,13 @@ extern "C" {
 void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef* hfdcan, uint32_t RxFifo0ITs)
 {
     if (hfdcan->Instance == hfdcan1.Instance) {
-        fdcan1_bus.update();
-    } else if (hfdcan->Instance != hfdcan2.Instance) {
-        c6x0.update();
+        while (HAL_FDCAN_GetRxFifoFillLevel(hfdcan, FDCAN_RX_FIFO0) > 0) {
+            fdcan1_bus.update();
+        }
+    } else if (hfdcan->Instance == hfdcan2.Instance) {
+        while (HAL_FDCAN_GetRxFifoFillLevel(hfdcan, FDCAN_RX_FIFO0) > 0) {
+            c6x0.update();
+        }
     }
 }
 
@@ -215,9 +219,13 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef* hfdcan, uint32_t RxFifo0ITs)
 void HAL_FDCAN_RxFifo1Callback(FDCAN_HandleTypeDef* hfdcan, uint32_t RxFifo1ITs)
 {
     if (hfdcan->Instance == hfdcan1.Instance) {
-        fdcan1_bus.update();
+        while (HAL_FDCAN_GetRxFifoFillLevel(hfdcan, FDCAN_RX_FIFO1) > 0) {
+            fdcan1_bus.update();
+        }
     } else if (hfdcan->Instance == hfdcan2.Instance) {
-        c6x0.update();
+        while (HAL_FDCAN_GetRxFifoFillLevel(hfdcan, FDCAN_RX_FIFO1) > 0) {
+            c6x0.update();
+        }
     }
 }
 
