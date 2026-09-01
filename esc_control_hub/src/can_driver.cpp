@@ -65,10 +65,12 @@ bool CANDriver::receive(CANFrame& out_frame)
     }
 
     out_frame.id          = rx_header.Identifier;
-    out_frame.dlc         = (uint8_t)rx_header.DataLength;
     out_frame.is_extended = (rx_header.IdType == FDCAN_EXTENDED_ID);
+    out_frame.dlc         = (uint8_t)rx_header.DataLength;
 
-    for (uint8_t i = 0; i < out_frame.dlc; ++i) {
+    uint8_t copy_len = dlc::dlc_to_data_length(out_frame.dlc);
+
+    for (uint8_t i = 0; i < copy_len; ++i) {
         out_frame.data[i] = rx_data[i];
     }
 
