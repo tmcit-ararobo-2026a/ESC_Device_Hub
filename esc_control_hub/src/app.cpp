@@ -17,30 +17,27 @@
 
 namespace {
 
-constexpr float MOTOR_CONTROL_PERIOD              = 0.001f;
-constexpr uint32_t k_heartbeat_toggle_interval_ms = 500;
-constexpr uint32_t k_target_last_update_time_ms   = 500;
-constexpr uint32_t k_send_anglar_data_interval_ms = 10;
-
-volatile bool timer_triggered = false;
-volatile float feedbacks[4];
-
-uint32_t heartbeat_last_toggle_time_ms = 0;
-uint32_t target_last_update_time_ms    = 0;
-uint32_t send_anglar_data_last_time_ms = 0;
-
-constexpr float max_current_c610 = 10.0f;
-constexpr float max_current_c620 = 20.0f;
+constexpr float MOTOR_CONTROL_PERIOD            = 0.001f;
+constexpr uint32_t HEARTBEAT_TOGGLE_INTERVAL_MS = 500;
+constexpr uint32_t TARGET_LAST_UPDATE_TIME_MS   = 500;
+constexpr uint32_t SEND_ANGLAR_DATA_INTERVAL_MS = 10;
+constexpr float C610_MAX_CURRENT                = 10.0f;
+constexpr float C620_MAX_CURRENT                = 20.0f;
+uint32_t heartbeat_last_toggle_time_ms          = 0;
+uint32_t target_last_update_time_ms             = 0;
+uint32_t send_anglar_data_last_time_ms          = 0;
 // Configuration
-gn10_motor::PIDConfig<float> pid_config[4];
-gn10_can::devices::MotorConfig motor_configres[4];
+std::array<gn10_motor::PIDConfig<float>, 4> pid_config;
+std::array<gn10_can::devices::MotorConfig, 4> motor_configres;
 // Calculate
-gn10_motor::PID<float> pid[4]{
+std::array<gn10_motor::PID<float>, 4> pid{
     gn10_motor::PID(pid_config[0]), gn10_motor::PID(pid_config[1]), gn10_motor::PID(pid_config[2]), gn10_motor::PID(pid_config[3])
 };
 
-float targets[4]  = {0.0f, 0.0f, 0.0f, 0.0f};
-float currents[4] = {0.0f, 0.0f, 0.0f, 0.0f};  // [A]
+volatile bool timer_triggered = false;
+std::array<volatile float, 4> feedbacks{};
+std::array<float, 4> targets{};
+std::array<float, 4> currents{};  // [A]
 
 /**
  * @brief Toggle heartbeat LED at a fixed interval.
@@ -48,7 +45,7 @@ float currents[4] = {0.0f, 0.0f, 0.0f, 0.0f};  // [A]
 void update_heartbeat_led()
 {
     const uint32_t now_ms = HAL_GetTick();
-    if ((now_ms - heartbeat_last_toggle_time_ms) >= k_heartbeat_toggle_interval_ms) {
+    if ((now_ms - heartbeat_last_toggle_time_ms) >= HEARTBEAT_TOGGLE_INTERVAL_MS) {
         heartbeat_last_toggle_time_ms = now_ms;
         HAL_GPIO_TogglePin(LED_1_GPIO_Port, LED_1_Pin);
     }
@@ -76,7 +73,7 @@ gn10_can::devices::ESCHubServer* server = nullptr;
 // C620 / C610
 c6x0_can::C6XCAN c6x0(can2_driver);
 // Encoder
-gn10_motor::IncrementalEncoder encoders[4] = {
+std::array<gn10_motor::IncrementalEncoder, 4> encoders{
     gn10_motor::IncrementalEncoder(4095, &htim8, TIM8),
     gn10_motor::IncrementalEncoder(4095, &htim1, TIM1),
     gn10_motor::IncrementalEncoder(4095, &htim3, TIM3),
@@ -86,7 +83,7 @@ gn10_motor::IncrementalEncoder encoders[4] = {
 void send_feedback_data(float feedback_data[4])
 {
     const uint32_t now_ms = HAL_GetTick();
-    if ((now_ms - send_anglar_data_last_time_ms) >= k_send_anglar_data_interval_ms) {
+    if ((now_ms - send_anglar_data_last_time_ms) >= SEND_ANGLAR_DATA_INTERVAL_MS) {
         send_anglar_data_last_time_ms = now_ms;
         server->set_feedbacks(feedback_data);
     }
@@ -95,28 +92,28 @@ void send_feedback_data(float feedback_data[4])
 void control_motors()
 {
     // Update feedbacks
-    for (uint8_t i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; i++) {
         if (motor_configres[i].get_encoder_type() == gn10_can::devices::EncoderType::None) {
-            feedbacks[i] = 2 * M_PI * float(c6x0.get_feedback_speed(i)) / 60.0f;
+            feedbacks[i] = 2.0f * M_PI * float(c6x0.get_feedback_speed(i)) / 60.0f;  // [rad/s]
         }
     }
     const uint32_t now_ms = HAL_GetTick();
-    if (server != nullptr && server->get_targets(targets)) {
+    if (server != nullptr && server->get_targets(targets.data())) {
         target_last_update_time_ms = now_ms;
     }
     // Update parameters by client and calculate PID
-    for (uint8_t i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; i++) {
         // Update configuration
         if (server != nullptr && server->get_init(i, motor_configres[i])) {
             HAL_GPIO_WritePin(LED_4_GPIO_Port, LED_4_Pin, GPIO_PIN_SET);
             float current_limit = 0.0f;
             switch (motor_configres[i].get_motor_type()) {
                 case gn10_can::devices::MotorType::C610:
-                    current_limit = max_current_c610;
+                    current_limit = C610_MAX_CURRENT;
                     break;
 
                 case gn10_can::devices::MotorType::C620:
-                    current_limit = max_current_c620;
+                    current_limit = C620_MAX_CURRENT;
                     break;
 
                 default:
@@ -137,8 +134,8 @@ void control_motors()
         currents[i] = pid[i].update(targets[i], feedbacks[i], MOTOR_CONTROL_PERIOD);
     }
     // Safety guard
-    if ((now_ms - target_last_update_time_ms) > k_target_last_update_time_ms) {
-        for (uint8_t i = 0; i < 4; i++) {
+    if ((now_ms - target_last_update_time_ms) > TARGET_LAST_UPDATE_TIME_MS) {
+        for (int i = 0; i < 4; i++) {
             currents[i] = 0.0f;
         }
         HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, GPIO_PIN_RESET);
@@ -146,7 +143,7 @@ void control_motors()
         HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, GPIO_PIN_SET);
     }
     // Send Currents
-    c6x0.set_currents_1_4(currents);
+    c6x0.set_currents_1_4(currents.data());
 }
 
 }  // namespace
@@ -161,7 +158,7 @@ void setup()
 
     server = new (server_storage) gn10_can::devices::ESCHubServer(fdcan1_bus, device_id);
 
-    for (uint8_t i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; i++) {
         pid_config[i].output_limit   = 20.0f;
         pid_config[i].integral_limit = 1.0f;
         pid_config[i].kp             = 0.0f;
@@ -242,7 +239,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
 {
     if (htim->Instance == htim6.Instance) {  // 1kHz timer
         // Update feedbacks
-        for (uint8_t i = 0; i < 4; i++) {
+        for (int i = 0; i < 4; i++) {
             switch (motor_configres[i].get_encoder_type()) {
                 case gn10_can::devices::EncoderType::IncrementalSpeed:
                     feedbacks[i] = encoders[i].count_to_angular_velocity(encoders[i].read_and_reset_count(), MOTOR_CONTROL_PERIOD);
