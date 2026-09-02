@@ -80,12 +80,12 @@ std::array<gn10_motor::IncrementalEncoder, 4> encoders{
     gn10_motor::IncrementalEncoder(4095, &htim4, TIM4)
 };
 
-void send_feedback_data(float feedback_data[4])
+void send_feedback_data(const std::array<float, 4>& feedback_data)
 {
     const uint32_t now_ms = HAL_GetTick();
     if ((now_ms - send_anglar_data_last_time_ms) >= SEND_ANGLAR_DATA_INTERVAL_MS) {
         send_anglar_data_last_time_ms = now_ms;
-        server->set_feedbacks(feedback_data);
+        server->set_feedbacks(feedback_data.data());
     }
 }
 
@@ -185,7 +185,7 @@ void loop()
     if (timer_triggered) {
         timer_triggered = false;
         control_motors();
-        float feedback_data[4] = {feedbacks[0], feedbacks[1], feedbacks[2], feedbacks[3]};
+        std::array<float, 4> feedback_data = {feedbacks[0], feedbacks[1], feedbacks[2], feedbacks[3]};
         send_feedback_data(feedback_data);
         // Basic System Process
         update_heartbeat_led();
