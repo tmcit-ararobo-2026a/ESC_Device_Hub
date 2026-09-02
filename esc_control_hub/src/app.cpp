@@ -28,7 +28,7 @@ uint32_t target_last_update_time_ms             = 0;
 uint32_t send_anglar_data_last_time_ms          = 0;
 // Configuration
 std::array<gn10_motor::PIDConfig<float>, 4> pid_config;
-std::array<gn10_can::devices::MotorConfig, 4> motor_configres;
+std::array<gn10_can::devices::MotorConfig, 4> motor_config;
 // Calculate
 std::array<gn10_motor::PID<float>, 4> pid{
     gn10_motor::PID(pid_config[0]), gn10_motor::PID(pid_config[1]), gn10_motor::PID(pid_config[2]), gn10_motor::PID(pid_config[3])
@@ -93,7 +93,7 @@ void control_motors()
 {
     // Update feedbacks
     for (int i = 0; i < 4; i++) {
-        if (motor_configres[i].get_encoder_type() == gn10_can::devices::EncoderType::None) {
+        if (motor_config[i].get_encoder_type() == gn10_can::devices::EncoderType::None) {
             feedbacks[i] = 2.0f * M_PI * float(c6x0.get_feedback_speed(i)) / 60.0f;  // [rad/s]
         }
     }
@@ -104,10 +104,10 @@ void control_motors()
     // Update parameters by client and calculate PID
     for (int i = 0; i < 4; i++) {
         // Update configuration
-        if (server != nullptr && server->get_init(i, motor_configres[i])) {
+        if (server != nullptr && server->get_init(i, motor_config[i])) {
             HAL_GPIO_WritePin(LED_4_GPIO_Port, LED_4_Pin, GPIO_PIN_SET);
             float current_limit = 0.0f;
-            switch (motor_configres[i].get_motor_type()) {
+            switch (motor_config[i].get_motor_type()) {
                 case gn10_can::devices::MotorType::C610:
                     current_limit = C610_MAX_CURRENT;
                     break;
@@ -122,7 +122,7 @@ void control_motors()
             pid_config[i].output_limit = current_limit;
             encoders[i].reset();
             pid[i].set_config(pid_config[i]);
-            c6x0.set_moter_type(i, motor_configres[i].get_motor_type());
+            c6x0.set_motor_type(i, motor_config[i].get_motor_type());
         }
         // Update gains
         float ff_gain;
@@ -240,7 +240,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
     if (htim->Instance == htim6.Instance) {  // 1kHz timer
         // Update feedbacks
         for (int i = 0; i < 4; i++) {
-            switch (motor_configres[i].get_encoder_type()) {
+            switch (motor_config[i].get_encoder_type()) {
                 case gn10_can::devices::EncoderType::IncrementalSpeed:
                     feedbacks[i] = encoders[i].count_to_angular_velocity(encoders[i].read_and_reset_count(), MOTOR_CONTROL_PERIOD);
                     break;

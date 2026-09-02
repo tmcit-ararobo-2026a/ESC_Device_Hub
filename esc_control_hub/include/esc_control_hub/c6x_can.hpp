@@ -43,7 +43,7 @@ public:
     // コンストラクタ
     C6XCAN(gn10_can::drivers::ICANDriver& can_driver) : can_driver_(can_driver) {}
 
-    void set_moter_type(int motor_index, gn10_can::devices::MotorType motor_type);
+    void set_motor_type(int motor_index, gn10_can::devices::MotorType motor_type);
 
     /**
      * @brief CAN Callback
