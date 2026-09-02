@@ -6,7 +6,7 @@
 
 namespace c6x0_can {
 
-void C6XCAN::set_moter_type(int motor_index, gn10_can::devices::MotorType motor_type)
+void C6XCAN::set_motor_type(int motor_index, gn10_can::devices::MotorType motor_type)
 {
     switch (motor_type) {
         case gn10_can::devices::MotorType::C610:
