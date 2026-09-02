@@ -213,6 +213,7 @@ extern "C" {
  */
 void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef* hfdcan, uint32_t RxFifo0ITs)
 {
+    (void)RxFifo0ITs;
     if (hfdcan->Instance == hfdcan1.Instance) {
         uint8_t timeout_counter = 0;
         while (HAL_FDCAN_GetRxFifoFillLevel(hfdcan, FDCAN_RX_FIFO0) > 0 && timeout_counter < 3) {
@@ -233,6 +234,7 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef* hfdcan, uint32_t RxFifo0ITs)
  */
 void HAL_FDCAN_RxFifo1Callback(FDCAN_HandleTypeDef* hfdcan, uint32_t RxFifo1ITs)
 {
+    (void)RxFifo1ITs;
     if (hfdcan->Instance == hfdcan1.Instance) {
         uint8_t timeout_counter = 0;
         while (HAL_FDCAN_GetRxFifoFillLevel(hfdcan, FDCAN_RX_FIFO1) > 0 && timeout_counter < 3) {
