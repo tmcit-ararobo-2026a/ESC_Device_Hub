@@ -195,8 +195,7 @@ void loop()
     if (timer_triggered) {
         timer_triggered = false;
         control_motors();
-        std::array<float, 4> feedback_data = {feedbacks[0], feedbacks[1], feedbacks[2], feedbacks[3]};
-        send_feedback_data(feedback_data);
+        send_feedback_data(feedbacks);
         // Basic System Process
         update_heartbeat_led();
     }
@@ -211,16 +210,13 @@ extern "C" {
 void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef* hfdcan, uint32_t RxFifo0ITs)
 {
     if (hfdcan->Instance == hfdcan1.Instance) {
-        uint8_t timeout_counter = 0;
-        while (HAL_FDCAN_GetRxFifoFillLevel(hfdcan, FDCAN_RX_FIFO0) > 0 && timeout_counter < 10) {
+        // FIFO0 にデータが存在する間、すべて読み出す
+        while (HAL_FDCAN_GetRxFifoFillLevel(hfdcan, FDCAN_RX_FIFO0) > 0) {
             fdcan1_bus.update();
-            timeout_counter++;
         }
     } else if (hfdcan->Instance == hfdcan2.Instance) {
-        uint8_t timeout_counter = 0;
-        while (HAL_FDCAN_GetRxFifoFillLevel(hfdcan, FDCAN_RX_FIFO0) > 0 && timeout_counter < 10) {
+        while (HAL_FDCAN_GetRxFifoFillLevel(hfdcan, FDCAN_RX_FIFO0) > 0) {
             c6x0.update();
-            timeout_counter++;
         }
     }
 }
@@ -231,16 +227,13 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef* hfdcan, uint32_t RxFifo0ITs)
 void HAL_FDCAN_RxFifo1Callback(FDCAN_HandleTypeDef* hfdcan, uint32_t RxFifo1ITs)
 {
     if (hfdcan->Instance == hfdcan1.Instance) {
-        uint8_t timeout_counter = 0;
-        while (HAL_FDCAN_GetRxFifoFillLevel(hfdcan, FDCAN_RX_FIFO1) > 0 && timeout_counter < 10) {
+        // FIFO1 にデータが存在する間、すべて読み出す
+        while (HAL_FDCAN_GetRxFifoFillLevel(hfdcan, FDCAN_RX_FIFO1) > 0) {
             fdcan1_bus.update();
-            timeout_counter++;
         }
     } else if (hfdcan->Instance == hfdcan2.Instance) {
-        uint8_t timeout_counter = 0;
-        while (HAL_FDCAN_GetRxFifoFillLevel(hfdcan, FDCAN_RX_FIFO1) > 0 && timeout_counter < 10) {
+        while (HAL_FDCAN_GetRxFifoFillLevel(hfdcan, FDCAN_RX_FIFO1) > 0) {
             c6x0.update();
-            timeout_counter++;
         }
     }
 }
