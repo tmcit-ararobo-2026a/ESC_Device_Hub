@@ -1,4 +1,5 @@
 #pragma once
+#include <array>
 #include <cstdint>
 
 #include "gn10_can/devices/motor_driver_types.hpp"
@@ -35,9 +36,9 @@ class C6XCAN
 {
 private:
     gn10_can::drivers::ICANDriver& can_driver_;
-    C620Feedback feedback_[8];
-    float current_to_data_conversion_[8] = {0.0f, 0.0f, 0.0f, 0.0f};
-    int max_currents_abs_[8]             = {0, 0, 0, 0};
+    std::array<C620Feedback, 8> feedback_{};
+    std::array<float, 8> current_to_data_conversion_{};
+    std::array<float, 8> max_currents_abs_{};
 
 public:
     // コンストラクタ
@@ -58,7 +59,7 @@ public:
      * @return true 送信成功
      * @return false 送信失敗
      */
-    bool set_currents_1_4(float currents[4]);
+    bool set_currents_1_4(const std::array<float, 4>& currents);
 
     /**
      * @brief 電流値設定
@@ -67,7 +68,7 @@ public:
      * @return true 送信成功
      * @return false 送信失敗
      */
-    bool set_currents_5_8(float currents[4]);
+    bool set_currents_5_8(const std::array<float, 4>& currents);
 
     /**
      * @brief feedbackのangleを読み取るgetter関数。
