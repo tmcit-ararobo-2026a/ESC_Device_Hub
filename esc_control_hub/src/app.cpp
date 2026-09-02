@@ -35,7 +35,7 @@ std::array<gn10_motor::PID<float>, 4> pid{
 };
 
 volatile bool timer_triggered = false;
-std::array<volatile float, 4> feedbacks{};
+std::array<float, 4> feedbacks{};
 std::array<float, 4> targets{};
 std::array<float, 4> currents{};  // [A]
 
@@ -93,14 +93,27 @@ void control_motors()
 {
     // Update feedbacks
     for (int i = 0; i < 4; i++) {
-        if (motor_config[i].get_encoder_type() == gn10_can::devices::EncoderType::None) {
-            feedbacks[i] = 2.0f * M_PI * float(c6x0.get_feedback_speed(i)) / 60.0f;  // [rad/s]
+        switch (motor_config[i].get_encoder_type()) {
+            case gn10_can::devices::EncoderType::None:
+                feedbacks[i] = 2.0f * M_PI * float(c6x0.get_feedback_speed(i)) / 60.0f;  // [rad/s]
+                break;
+            case gn10_can::devices::EncoderType::IncrementalSpeed:
+                feedbacks[i] = encoders[i].count_to_angular_velocity(encoders[i].read_and_reset_count(), MOTOR_CONTROL_PERIOD);
+                break;
+            case gn10_can::devices::EncoderType::IncrementalTotal:
+                feedbacks[i] = encoders[i].accumulate_angle_rad(encoders[i].read_and_reset_count());
+                break;
+            default:
+                break;
         }
     }
     const uint32_t now_ms = HAL_GetTick();
     if (server != nullptr && server->get_targets(targets.data())) {
         target_last_update_time_ms = now_ms;
     }
+
+    const bool is_timeout = ((now_ms - target_last_update_time_ms) > TARGET_LAST_UPDATE_TIME_MS);
+
     // Update parameters by client and calculate PID
     for (int i = 0; i < 4; i++) {
         // Update configuration
@@ -122,28 +135,29 @@ void control_motors()
             pid_config[i].output_limit = current_limit;
             encoders[i].reset();
             pid[i].set_config(pid_config[i]);
+            pid[i].reset(feedbacks[i]);
             c6x0.set_motor_type(i, motor_config[i].get_motor_type());
         }
         // Update gains
         float ff_gain;
         if (server != nullptr && server->get_gains(i, pid_config[i].kp, pid_config[i].ki, pid_config[i].kd, ff_gain)) {
-            pid[i].set_config(pid_config[i]);
+            pid[i].update_config(pid_config[i]);
             HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, GPIO_PIN_SET);
         }
-        // calculate PID
-        currents[i] = pid[i].update(targets[i], feedbacks[i], MOTOR_CONTROL_PERIOD);
-    }
-    // Safety guard
-    if ((now_ms - target_last_update_time_ms) > TARGET_LAST_UPDATE_TIME_MS) {
-        for (int i = 0; i < 4; i++) {
+        if (is_timeout) {
             currents[i] = 0.0f;
+            pid[i].reset(feedbacks[i]);
+        } else {
+            currents[i] = pid[i].update(targets[i], feedbacks[i], MOTOR_CONTROL_PERIOD);
         }
+    }
+    if (is_timeout) {
         HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, GPIO_PIN_RESET);
     } else {
         HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, GPIO_PIN_SET);
     }
     // Send Currents
-    c6x0.set_currents_1_4(currents.data());
+    c6x0.set_currents_1_4(currents);
 }
 
 }  // namespace
@@ -185,8 +199,7 @@ void loop()
     if (timer_triggered) {
         timer_triggered = false;
         control_motors();
-        std::array<float, 4> feedback_data = {feedbacks[0], feedbacks[1], feedbacks[2], feedbacks[3]};
-        send_feedback_data(feedback_data);
+        send_feedback_data(feedbacks);
         // Basic System Process
         update_heartbeat_led();
     }
@@ -238,19 +251,6 @@ void HAL_FDCAN_RxFifo1Callback(FDCAN_HandleTypeDef* hfdcan, uint32_t RxFifo1ITs)
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
 {
     if (htim->Instance == htim6.Instance) {  // 1kHz timer
-        // Update feedbacks
-        for (int i = 0; i < 4; i++) {
-            switch (motor_config[i].get_encoder_type()) {
-                case gn10_can::devices::EncoderType::IncrementalSpeed:
-                    feedbacks[i] = encoders[i].count_to_angular_velocity(encoders[i].read_and_reset_count(), MOTOR_CONTROL_PERIOD);
-                    break;
-                case gn10_can::devices::EncoderType::IncrementalTotal:
-                    feedbacks[i] = encoders[i].accumulate_angle_rad(encoders[i].read_and_reset_count());
-                    break;
-                default:
-                    break;
-            }
-        }
         timer_triggered = true;
     }
 }
