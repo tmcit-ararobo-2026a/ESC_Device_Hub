@@ -111,6 +111,9 @@ void control_motors()
     if (server != nullptr && server->get_targets(targets.data())) {
         target_last_update_time_ms = now_ms;
     }
+
+    const bool is_timeout = ((now_ms - target_last_update_time_ms) > TARGET_LAST_UPDATE_TIME_MS);
+
     // Update parameters by client and calculate PID
     for (int i = 0; i < 4; i++) {
         // Update configuration
@@ -132,22 +135,23 @@ void control_motors()
             pid_config[i].output_limit = current_limit;
             encoders[i].reset();
             pid[i].set_config(pid_config[i]);
+            pid[i].reset(feedbacks[i]);
             c6x0.set_motor_type(i, motor_config[i].get_motor_type());
         }
         // Update gains
         float ff_gain;
         if (server != nullptr && server->get_gains(i, pid_config[i].kp, pid_config[i].ki, pid_config[i].kd, ff_gain)) {
-            pid[i].set_config(pid_config[i]);
+            pid[i].update_config(pid_config[i]);
             HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, GPIO_PIN_SET);
         }
-        // calculate PID
-        currents[i] = pid[i].update(targets[i], feedbacks[i], MOTOR_CONTROL_PERIOD);
-    }
-    // Safety guard
-    if ((now_ms - target_last_update_time_ms) > TARGET_LAST_UPDATE_TIME_MS) {
-        for (int i = 0; i < 4; i++) {
+        if (is_timeout) {
             currents[i] = 0.0f;
+            pid[i].reset(feedbacks[i]);
+        } else {
+            currents[i] = pid[i].update(targets[i], feedbacks[i], MOTOR_CONTROL_PERIOD);
         }
+    }
+    if (is_timeout) {
         HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, GPIO_PIN_RESET);
     } else {
         HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, GPIO_PIN_SET);
