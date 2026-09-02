@@ -35,7 +35,7 @@ std::array<gn10_motor::PID<float>, 4> pid{
 };
 
 volatile bool timer_triggered = false;
-std::array<volatile float, 4> feedbacks{};
+std::array<float, 4> feedbacks{};
 std::array<float, 4> targets{};
 std::array<float, 4> currents{};  // [A]
 
@@ -93,8 +93,18 @@ void control_motors()
 {
     // Update feedbacks
     for (int i = 0; i < 4; i++) {
-        if (motor_config[i].get_encoder_type() == gn10_can::devices::EncoderType::None) {
-            feedbacks[i] = 2.0f * M_PI * float(c6x0.get_feedback_speed(i)) / 60.0f;  // [rad/s]
+        switch (motor_config[i].get_encoder_type()) {
+            case gn10_can::devices::EncoderType::None:
+                feedbacks[i] = 2.0f * M_PI * float(c6x0.get_feedback_speed(i)) / 60.0f;  // [rad/s]
+                break;
+            case gn10_can::devices::EncoderType::IncrementalSpeed:
+                feedbacks[i] = encoders[i].count_to_angular_velocity(encoders[i].read_and_reset_count(), MOTOR_CONTROL_PERIOD);
+                break;
+            case gn10_can::devices::EncoderType::IncrementalTotal:
+                feedbacks[i] = encoders[i].accumulate_angle_rad(encoders[i].read_and_reset_count());
+                break;
+            default:
+                break;
         }
     }
     const uint32_t now_ms = HAL_GetTick();
@@ -238,19 +248,6 @@ void HAL_FDCAN_RxFifo1Callback(FDCAN_HandleTypeDef* hfdcan, uint32_t RxFifo1ITs)
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
 {
     if (htim->Instance == htim6.Instance) {  // 1kHz timer
-        // Update feedbacks
-        for (int i = 0; i < 4; i++) {
-            switch (motor_config[i].get_encoder_type()) {
-                case gn10_can::devices::EncoderType::IncrementalSpeed:
-                    feedbacks[i] = encoders[i].count_to_angular_velocity(encoders[i].read_and_reset_count(), MOTOR_CONTROL_PERIOD);
-                    break;
-                case gn10_can::devices::EncoderType::IncrementalTotal:
-                    feedbacks[i] = encoders[i].accumulate_angle_rad(encoders[i].read_and_reset_count());
-                    break;
-                default:
-                    break;
-            }
-        }
         timer_triggered = true;
     }
 }
