@@ -185,8 +185,6 @@ void setup()
  */
 void loop()
 {
-    c6x0.update();
-    fdcan1_bus.update();
     if (timer_triggered) {
         timer_triggered = false;
         control_motors();
@@ -199,6 +197,46 @@ void loop()
 
 // ---------------------------- C language's functions override ----------------------------------
 extern "C" {
+
+/**
+ * @brief Receive callback for FDCAN FIFO0.
+ */
+void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef* hfdcan, uint32_t RxFifo0ITs)
+{
+    if (hfdcan->Instance == hfdcan1.Instance) {
+        uint8_t timeout_counter = 0;
+        while (HAL_FDCAN_GetRxFifoFillLevel(hfdcan, FDCAN_RX_FIFO0) > 0 && timeout_counter < 10) {
+            fdcan1_bus.update();
+            timeout_counter++;
+        }
+    } else if (hfdcan->Instance == hfdcan2.Instance) {
+        uint8_t timeout_counter = 0;
+        while (HAL_FDCAN_GetRxFifoFillLevel(hfdcan, FDCAN_RX_FIFO0) > 0 && timeout_counter < 10) {
+            c6x0.update();
+            timeout_counter++;
+        }
+    }
+}
+
+/**
+ * @brief Receive callback for FDCAN FIFO1.
+ */
+void HAL_FDCAN_RxFifo1Callback(FDCAN_HandleTypeDef* hfdcan, uint32_t RxFifo1ITs)
+{
+    if (hfdcan->Instance == hfdcan1.Instance) {
+        uint8_t timeout_counter = 0;
+        while (HAL_FDCAN_GetRxFifoFillLevel(hfdcan, FDCAN_RX_FIFO1) > 0 && timeout_counter < 10) {
+            fdcan1_bus.update();
+            timeout_counter++;
+        }
+    } else if (hfdcan->Instance == hfdcan2.Instance) {
+        uint8_t timeout_counter = 0;
+        while (HAL_FDCAN_GetRxFifoFillLevel(hfdcan, FDCAN_RX_FIFO1) > 0 && timeout_counter < 10) {
+            c6x0.update();
+            timeout_counter++;
+        }
+    }
+}
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
 {

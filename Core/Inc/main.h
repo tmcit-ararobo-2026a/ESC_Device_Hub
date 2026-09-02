@@ -65,10 +65,6 @@ void Error_Handler(void);
 #define LED_2_GPIO_Port GPIOA
 #define LED_1_Pin GPIO_PIN_1
 #define LED_1_GPIO_Port GPIOA
-#define Synchronization_flag_Pin GPIO_PIN_2
-#define Synchronization_flag_GPIO_Port GPIOA
-#define Synchronization_clock_Pin GPIO_PIN_3
-#define Synchronization_clock_GPIO_Port GPIOA
 #define LIM4_1_Pin GPIO_PIN_4
 #define LIM4_1_GPIO_Port GPIOA
 #define LIM1_1_Pin GPIO_PIN_14
@@ -79,18 +75,10 @@ void Error_Handler(void);
 #define LIM2_1_GPIO_Port GPIOD
 #define LIM2_2_Pin GPIO_PIN_12
 #define LIM2_2_GPIO_Port GPIOD
-#define ENC1_B_Pin GPIO_PIN_6
-#define ENC1_B_GPIO_Port GPIOC
-#define ENC1_A_Pin GPIO_PIN_7
-#define ENC1_A_GPIO_Port GPIOC
 #define LIM3_1_Pin GPIO_PIN_8
 #define LIM3_1_GPIO_Port GPIOC
 #define LIM3_2_Pin GPIO_PIN_9
 #define LIM3_2_GPIO_Port GPIOC
-#define ENC2_B_Pin GPIO_PIN_8
-#define ENC2_B_GPIO_Port GPIOA
-#define ENC2_A_Pin GPIO_PIN_9
-#define ENC2_A_GPIO_Port GPIOA
 #define LIM4_2_Pin GPIO_PIN_10
 #define LIM4_2_GPIO_Port GPIOA
 #define ID_4_SW_Pin GPIO_PIN_15
@@ -99,14 +87,6 @@ void Error_Handler(void);
 #define ID_2_SW_GPIO_Port GPIOC
 #define POWER_MONITOR_Pin GPIO_PIN_3
 #define POWER_MONITOR_GPIO_Port GPIOB
-#define ENC3_B_Pin GPIO_PIN_4
-#define ENC3_B_GPIO_Port GPIOB
-#define ENC3_A_Pin GPIO_PIN_5
-#define ENC3_A_GPIO_Port GPIOB
-#define ENC4_B_Pin GPIO_PIN_6
-#define ENC4_B_GPIO_Port GPIOB
-#define ENC4_A_Pin GPIO_PIN_7
-#define ENC4_A_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 

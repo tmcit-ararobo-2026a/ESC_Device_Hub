@@ -19,9 +19,9 @@ bool CANDriver::init()
     if (HAL_FDCAN_Start(hfdcan_) != HAL_OK) {
         return false;
     }
-    // if (HAL_FDCAN_ActivateNotification(hfdcan_, FDCAN_IT_RX_FIFO0_NEW_MESSAGE, 0) != HAL_OK) {
-    //     return false;
-    // }
+    if (HAL_FDCAN_ActivateNotification(hfdcan_, FDCAN_IT_RX_FIFO0_NEW_MESSAGE, 0) != HAL_OK) {
+        return false;
+    }
     return true;
 }
 
@@ -35,7 +35,7 @@ bool CANDriver::send(const CANFrame& frame)
     }
     tx_header.Identifier          = frame.id;
     tx_header.TxFrameType         = FDCAN_DATA_FRAME;
-    tx_header.DataLength          = frame.dlc;
+    tx_header.DataLength          = (uint32_t)frame.dlc;
     tx_header.ErrorStateIndicator = FDCAN_ESI_ACTIVE;
     tx_header.BitRateSwitch       = FDCAN_BRS_OFF;
     tx_header.FDFormat            = FDCAN_CLASSIC_CAN;
@@ -65,10 +65,12 @@ bool CANDriver::receive(CANFrame& out_frame)
     }
 
     out_frame.id          = rx_header.Identifier;
-    out_frame.dlc         = rx_header.DataLength;
     out_frame.is_extended = (rx_header.IdType == FDCAN_EXTENDED_ID);
+    out_frame.dlc         = (uint8_t)rx_header.DataLength;
 
-    for (uint8_t i = 0; i < out_frame.dlc; ++i) {
+    uint8_t copy_len = dlc::dlc_to_data_length(out_frame.dlc);
+
+    for (uint8_t i = 0; i < copy_len; ++i) {
         out_frame.data[i] = rx_data[i];
     }
 
