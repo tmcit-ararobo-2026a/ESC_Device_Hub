@@ -1,4 +1,4 @@
-#include "esc_control_hub/app.hpp"
+#include "app/app.hpp"
 // std
 #include <cmath>
 #include <new>
@@ -8,13 +8,13 @@
 #include "gn10_can/core/can_bus.hpp"
 #include "gn10_can/devices/esc_hub_server.hpp"
 // esc-control-hub
-#include "esc_control_hub/c6x_can.hpp"
-#include "esc_control_hub/can_callback_helper.hpp"
-#include "esc_control_hub/can_driver.hpp"
-#include "esc_control_hub/fdcan_driver.hpp"
-#include "esc_control_hub/incremental_encoder.hpp"
-#include "esc_control_hub/pid.hpp"
+#include "app/c6x_can.hpp"
+#include "app/incremental_encoder.hpp"
+#include "app/pid.hpp"
 // others
+#include "gn10_stm32_fdcan_driver/can_callback_helper.hpp"
+#include "gn10_stm32_fdcan_driver/can_driver.hpp"
+#include "gn10_stm32_fdcan_driver/fdcan_driver.hpp"
 
 namespace {
 

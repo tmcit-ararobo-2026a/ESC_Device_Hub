@@ -1,4 +1,4 @@
-#include "esc_control_hub/c6x_can.hpp"
+#include "app/c6x_can.hpp"
 
 #include <algorithm>
 #include <climits>

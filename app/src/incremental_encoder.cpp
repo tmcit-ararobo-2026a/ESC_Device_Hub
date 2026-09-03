@@ -10,7 +10,7 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  */
-#include "esc_control_hub/incremental_encoder.hpp"
+#include "app/incremental_encoder.hpp"
 
 #include <cmath>
 #include <cstdint>
