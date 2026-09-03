@@ -9,6 +9,7 @@
 #include "gn10_can/devices/esc_hub_server.hpp"
 // esc-control-hub
 #include "esc_control_hub/c6x_can.hpp"
+#include "esc_control_hub/can_callback_helper.hpp"
 #include "esc_control_hub/can_driver.hpp"
 #include "esc_control_hub/fdcan_driver.hpp"
 #include "esc_control_hub/incremental_encoder.hpp"
@@ -214,19 +215,8 @@ extern "C" {
 void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef* hfdcan, uint32_t RxFifo0ITs)
 {
     (void)RxFifo0ITs;
-    if (hfdcan->Instance == hfdcan1.Instance) {
-        uint8_t timeout_counter = 0;
-        while (HAL_FDCAN_GetRxFifoFillLevel(hfdcan, FDCAN_RX_FIFO0) > 0 && timeout_counter < 3) {
-            fdcan1_bus.update();
-            timeout_counter++;
-        }
-    } else if (hfdcan->Instance == hfdcan2.Instance) {
-        uint8_t timeout_counter = 0;
-        while (HAL_FDCAN_GetRxFifoFillLevel(hfdcan, FDCAN_RX_FIFO0) > 0 && timeout_counter < 3) {
-            c6x0.update();
-            timeout_counter++;
-        }
-    }
+    if (process_fdcan_fifo(hfdcan, &hfdcan1, fdcan1_bus, FDCAN_RX_FIFO0)) return;
+    if (process_fdcan_fifo(hfdcan, &hfdcan2, c6x0, FDCAN_RX_FIFO0)) return;
 }
 
 /**
@@ -235,19 +225,8 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef* hfdcan, uint32_t RxFifo0ITs)
 void HAL_FDCAN_RxFifo1Callback(FDCAN_HandleTypeDef* hfdcan, uint32_t RxFifo1ITs)
 {
     (void)RxFifo1ITs;
-    if (hfdcan->Instance == hfdcan1.Instance) {
-        uint8_t timeout_counter = 0;
-        while (HAL_FDCAN_GetRxFifoFillLevel(hfdcan, FDCAN_RX_FIFO1) > 0 && timeout_counter < 3) {
-            fdcan1_bus.update();
-            timeout_counter++;
-        }
-    } else if (hfdcan->Instance == hfdcan2.Instance) {
-        uint8_t timeout_counter = 0;
-        while (HAL_FDCAN_GetRxFifoFillLevel(hfdcan, FDCAN_RX_FIFO1) > 0 && timeout_counter < 3) {
-            c6x0.update();
-            timeout_counter++;
-        }
-    }
+    if (process_fdcan_fifo(hfdcan, &hfdcan1, fdcan1_bus, FDCAN_RX_FIFO1)) return;
+    if (process_fdcan_fifo(hfdcan, &hfdcan2, c6x0, FDCAN_RX_FIFO1)) return;
 }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
