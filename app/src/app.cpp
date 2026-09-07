@@ -96,13 +96,27 @@ void control_motors()
     for (int i = 0; i < 4; i++) {
         switch (motor_config[i].get_encoder_type()) {
             case gn10_can::devices::EncoderType::None:
-                feedbacks[i] = 2.0f * M_PI * float(c6x0.get_feedback_speed(i)) / 60.0f;  // [rad/s]
+                // 電流制御の場合、フィードバックは使用しないため、0に設定する
+                feedbacks[i] = 0.0f;
                 break;
             case gn10_can::devices::EncoderType::IncrementalSpeed:
                 feedbacks[i] = encoders[i].count_to_angular_velocity(encoders[i].read_and_reset_count(), MOTOR_CONTROL_PERIOD);
                 break;
             case gn10_can::devices::EncoderType::IncrementalTotal:
                 feedbacks[i] = encoders[i].accumulate_angle_rad(encoders[i].read_and_reset_count());
+                break;
+            case gn10_can::devices::EncoderType::Absolute:
+                // 未対応のため、0に設定する
+                feedbacks[i] = 0.0f;
+                break;
+            case gn10_can::devices::EncoderType::InternalIncremental:
+                feedbacks[i] = 2.0f * M_PI * float(c6x0.get_feedback_speed(i)) / 60.0f;  // [rad/s]
+                break;
+            case gn10_can::devices::EncoderType::InternalAbsolute:
+                feedbacks[i] = 2.0f * M_PI * float(c6x0.get_feedback_angle(i)) / 8192.0f;  // [rad]
+                break;
+            case gn10_can::devices::EncoderType::InternalIncrementalTotal:
+                feedbacks[i] += 2.0f * M_PI * float(c6x0.get_feedback_speed(i)) / 60.0f * MOTOR_CONTROL_PERIOD;  // [rad]
                 break;
             default:
                 break;
@@ -138,6 +152,7 @@ void control_motors()
             pid[i].set_config(pid_config[i]);
             pid[i].reset(feedbacks[i]);
             c6x0.set_motor_type(i, motor_config[i].get_motor_type());
+            feedbacks[i] = 0.0f;  // for internal incremental encoder
         }
         // Update gains
         float ff_gain;
