@@ -164,7 +164,11 @@ void control_motors()
             currents[i] = 0.0f;
             pid[i].reset(feedbacks[i]);
         } else {
-            currents[i] = pid[i].update(targets[i], feedbacks[i], MOTOR_CONTROL_PERIOD);
+            if (motor_config[i].get_encoder_type() == gn10_can::devices::EncoderType::None) {
+                currents[i] = targets[i];
+            } else {
+                currents[i] = pid[i].update(targets[i], feedbacks[i], MOTOR_CONTROL_PERIOD);
+            }
         }
     }
     if (is_timeout) {
